@@ -47,8 +47,21 @@ SELECT
                       AND DP.SEQDESCRICAO = PD.SEQDESCRICAO
                       AND PD.SEQPRODUTO = 1002
                       AND PD.TIPODESCRICAO = 4;
-
-
+--- select ncm cest
+select P.SEQPRODUTO, 
+                      C.CODCLASSFISCAL,
+                      C.DESCRICAOCEST,
+                      C.CODNCM,
+                      C.DESCRICAO as desNCM,
+                      C.CEST                      
+                       from DGE_PRODUTO P, DGE_CLASSFISCAL C 
+                       WHERE P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
+                       AND P.SEQPRODUTO = 1002 
+                       
+                      SELECT 
+                      Replace(Trim(To_char(c.CODNCM, '0999,90,00')), '.', ','),
+                      Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') 
+                      FROM DGE_CLASSFISCAL C GROUP BY  C.CEST, C.CODNCM
 
 
 
