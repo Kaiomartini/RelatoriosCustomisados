@@ -32,8 +32,21 @@ SELECT
         AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
         AND P.SEQPRODUTO = 1002
 
-
-
+--- select descrição descricao 
+SELECT 
+                      PD.SEQDESCRICAO,
+                      I.DESCRICAO, 
+                      PD.TIPODESCRICAO,
+                      DP.DESCRICAO 
+                      FROM                       
+                      DGE_PRODUTODESCRICAO PD,
+                      DGE_IDIOMA I,
+                      DGE_DESCRICAOPRODUTO DP
+                      WHERE 
+                      PD.SEQIDIOMA = I.SEQIDIOMA
+                      AND DP.SEQDESCRICAO = PD.SEQDESCRICAO
+                      AND PD.SEQPRODUTO = 1002
+                      AND PD.TIPODESCRICAO = 4;
 
 
 
