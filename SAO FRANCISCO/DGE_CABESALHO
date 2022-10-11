@@ -1,0 +1,55 @@
+Function DGEF_CabecalhoTeste(psNomeRelatorio String,
+                               pnNroEmpresa GE_Empresa.NroEmpresa%Type) Return CLob Is
+
+      cHTML CLob := Null;
+      bLogo BLob := Null;
+      sRazaoSocial GE_Empresa.RazaoSocial%Type;
+
+   Begin
+      Select
+         RazaoSocial, Logo
+      Into
+         sRazaoSocial, bLogo
+      From
+         GE_Empresa E
+      Where
+         E.NroEmpresa = pnNroEmpresa;
+
+      -- Monta do Cabeçalho dos relatórios
+      cHTML := cHTML||'<table style="text-align: center; width: 100%; margin-bottom:10px;" cellpadding=1 cellspacing=0>';
+      cHTML := cHTML||'<tr>';
+      cHTML := cHTML||'<th style="border-right: 0px; width:200px;"><img height="83" src="data:image/png;base64, ';
+      cHTML := cHTML||DPKG_Library.DGEF_ImagemBase64(bLogo);
+      cHTML := cHTML||' "alt="'||sRazaoSocial||'" title="'||sRazaoSocial||'" vspace="0px" hspace="0px" border="0px" align="center"/>';
+      cHTML := cHTML||'<th style="font-size: 26px; text-align: center; font-style: italic; text-decoration: underline;">'||psNomeRelatorio||'</th>';
+      cHTML := cHTML||'<th style="font-size: 12px; width:100px;">';
+      cHTML := cHTML||TO_CHAR(SYSDATE, 'DD/MM/YYYY')||'<br/>';
+      cHTML := cHTML||TO_Char(SYSDATE, 'hh24:MI:ss');
+      cHTML := cHTML||'</th>';
+      cHTML := cHTML||'</tr>';
+      cHTML := cHTML||'</table>';
+
+      Return(cHTML);
+
+   End DGEF_CabecalhoTeste;
+
+/********************************************/
+/*Function que retorna o rodape do Relatório*/
+/********************************************/
+   Function DGEF_RodapeHTML Return CLob Is
+
+      cHTML CLob := Null;
+
+    Begin
+      cHTML := cHTML||'<table style="width: 100%; border-top: 1px solid; margin-top:10px;">';
+      cHTML := cHTML||'<tr border=1>';
+      cHTML := cHTML||'<td style="padding-left: 5px;"><i>Datavale Tecnologia & Sistemas</i></td>';
+      cHTML := cHTML||'</tr>';
+      cHTML := cHTML||'</table>';
+      cHTML := cHTML||'</div>';
+      cHTML := cHTML||'</body>';
+      cHTML := cHTML||'</html>';
+
+    Return(cHTML);
+
+   End DGEF_RodapeHTML;
