@@ -46,7 +46,7 @@ SELECT
                       PD.SEQIDIOMA = I.SEQIDIOMA
                       AND DP.SEQDESCRICAO = PD.SEQDESCRICAO
                       AND PD.SEQPRODUTO = 1002
-                      AND PD.TIPODESCRICAO = 4;
+                      AND PD.TIPODESCRICAO = 4; 
 --- select ncm cest
 select P.SEQPRODUTO, 
                       C.CODCLASSFISCAL,
@@ -63,6 +63,9 @@ select P.SEQPRODUTO,
                       Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') 
                       FROM DGE_CLASSFISCAL C GROUP BY  C.CEST, C.CODNCM
 
+-- select para buscar paremetros nas tabelas
+SELECT * FROM DBA_ALL_TABLES WHERE TABLE_NAME IN (
+SELECT TABLE_NAME FROM DBA_TAB_COLUMNS WHERE OWNER = 'TSTDATAVALE' AND COLUMN_NAME = 'SEQGRUPOCOMPRA')
 
 
 
