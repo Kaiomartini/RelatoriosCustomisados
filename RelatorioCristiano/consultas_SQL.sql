@@ -11,26 +11,34 @@ e.cep,
 e.cidade,
 e.inscrestadual as ie
  FROM GE_EMPRESA E  where e.nroempresa = 1 
--- SELECT FINHA TECNICA 
-SELECT
-        lpad(pe.gtin,14,0) as gtin,
-        pp.coddipoa,
-        pp.prazovalidade||' '||DECODE(pp.Tipovalidade, 1,'Dias', 2,'Meses')as validade,                                               
-        DECODE(p.conservacao, 1,'Congelado', 2,'Resfriado', 3,'Ambiente')As Conservacao,
-        p.TempMinima||' '||'°C' As TempMinima,
-        p.TempMaxima||' '||'°C' As TempMaxima,
-        DECODE(pe.UNIDADE, 'CX', 'CAIXA', '') As Unidade,
-        pe.PesoMedio, 
-        (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF 
-     FROM 
-        DGE_PRODUTO P,
-        Dge_Produtoplanta  pp,
-        DGE_PRODUTOEMBALAGEM Pe   
-     WHERE 
-        P.SEQPRODUTO = Pe.Seqproduto 
-        AND  P.SEQPRODUTO = PP.Seqproduto 
-        AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
-        AND P.SEQPRODUTO = 1002
+-- SELECT FICHA TECNICA 
+    SELECT                  
+            lpad(pe.gtin,14,0) as gtin,
+            pp.coddipoa AS DIPOA,
+            pp.prazovalidade||' '||DECODE(pp.Tipovalidade, 1,'Dias', 2,'Meses')as validade,                                               
+            DECODE(p.conservacao, 1,'Congelado', 2,'Resfriado', 3,'Ambiente')As Conservacao,
+            p.TempMinima||' '||'°C' As TempMinima,
+            p.TempMaxima||' '||'°C' As TempMaxima,
+            DECODE(pe.UNIDADE, 'CX', 'CAIXA', '') As Unidade,
+            pe.PesoMedio, 
+            (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF,
+
+            C.CODCLASSFISCAL,
+            Replace(Trim(To_char(c.CODNCM, '0999,90,00')), '.', ',')as NCM,
+            C.DESCRICAO as desNCM,
+            Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') as CEST,
+            C.DESCRICAOCEST 
+         FROM 
+            DGE_PRODUTO P,
+            Dge_Produtoplanta  pp,
+            DGE_PRODUTOEMBALAGEM Pe,
+            DGE_CLASSFISCAL C                          
+         WHERE 
+            P.SEQPRODUTO = Pe.Seqproduto
+            AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
+            AND  P.SEQPRODUTO = PP.Seqproduto 
+            AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
+            AND P.SEQPRODUTO = 1002;
 
 --- select descrição descricao 
 SELECT 
