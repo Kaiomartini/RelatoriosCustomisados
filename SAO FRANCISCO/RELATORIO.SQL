@@ -79,7 +79,8 @@ FUNCTION DINFR_FichaTecnicaProduto(nSeqProduto DIN_Produto.SeqProduto%Type) RETU
       LOOP
          
          cHTML := cHTML||'<tr>';
-         cHTML := cHTML||'<td align="left">'|| TO_Char(i.Produto) ||'</td>';
+         cHTML := cHTML||'<td align="left">'|| TO
+         _Char(i.Produto) ||'</td>';
          cHTML := cHTML||'</tr>';
        
       END LOOP;

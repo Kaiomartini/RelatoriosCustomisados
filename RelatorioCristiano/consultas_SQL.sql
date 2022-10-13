@@ -1,16 +1,17 @@
 SELECT * FROM DGE_PRODUTOANEXO WHERE SEQPRODUTO = 2040 
 -- select empresa 
-SELECT E.RAZAOSOCIAL,
-E.FANTASIA,
-E.CNPJENTIDADE,
-E.TELEVENDASDDD as DDD,
-E.TELEVENDASNRO as telefone,
-e.endereco as rua,
-e.endereconro as numero,
-e.cep,
-e.cidade,
-e.inscrestadual as ie
- FROM GE_EMPRESA E  where e.nroempresa = 1 
+    SELECT 
+            E.RAZAOSOCIAL,
+            E.FANTASIA,
+            E.CNPJENTIDADE,
+            E.TELEVENDASDDD as DDD,
+            E.TELEVENDASNRO as telefone,
+            e.endereco as rua,
+            e.endereconro as numero,
+            e.cep,
+            e.cidade,
+            e.inscrestadual as ie
+            FROM GE_EMPRESA E  where e.nroempresa = 1 
 -- SELECT FICHA TECNICA 
     SELECT                  
             lpad(pe.gtin,14,0) as gtin,
