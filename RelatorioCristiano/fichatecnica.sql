@@ -1,6 +1,6 @@
 
 
-FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
+FUNCTION DGEFR_FichaTecnicaProdutoCMACMA(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
                                    nEmpresa ge_empresa.nroempresa%Type ) RETURN CLob IS
   
   cHTML CLob := Null;
@@ -1146,4 +1146,4 @@ cHTML := cHTML||'</div>
     When Others Then
        Return (cHTML);
    
-   END DGEFR_FichaTecnicaProduto;
+   END DGEFR_FichaTecnicaProdutoCMA;
