@@ -214,7 +214,8 @@ SELECT
       e.endereconro,
       Replace(Trim(To_char(e.CEP/1000,'00000.000')), '.', '-')as cep,
       e.cidade,
-      e.inscrestadual as ie
+      e.inscrestadual as ie,
+      e.logo
   into 
       vRazaosocial,  
       vNomeFantasia,    
@@ -225,7 +226,8 @@ SELECT
       vNumero ,        
       vCep, 
       vCidade,
-      vIE            
+      vIE,
+      vLogo            
   FROM 
       GE_EMPRESA E  
   where e.nroempresa = vEmpresa;
@@ -251,7 +253,7 @@ cHTML := cHTML ||'
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>FichaTecnica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <style>
@@ -348,29 +350,15 @@ cHTML := cHTML ||'
         
     </style>
     
-</head>';
-
-Select
-         RazaoSocial, Logo
-      Into
-         sRazaoSocial, vLogo
-      From
-         GE_Empresa E
-      Where
-         E.NroEmpresa = 1;
-         
-cHTML := cHTML||'
+</head>
 <body class="text-uppercase">
 
     <div class="A4">
         <section id="cabesacho">
         <div class="row b1">
-
-            <div class="col-2">';
-            
-cHTML := cHTML||'<img class="logo img-fluid" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />';
-cHTML := cHTML||'</div>
-
+            <div class="col-2">
+                 <img class="logo img-fluid" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />
+            </div>
             <div class="col-6 quebra">
                 <div class="row text-center ">
                     <p class="fs-5 fw-bold">'||TO_CHAR(vNomeFantasia)||'</p> 
@@ -378,19 +366,14 @@ cHTML := cHTML||'</div>
                     <p class="fs-6">'||'CNPJ: '||TO_CHAR(vCNPJ)||'IE:'||TO_CHAR(vIE)||'</p>                      
                     <p class="fs-6 d-inline"> Telefone:('||TO_CHAR(vDDD)||')'||TO_CHAR(vTelefone)||'</p>
                     <p class="fs-6 d-inline">'||'CEP: '||TO_CHAR(vCep)||'</p>                        
-                </div>
-                
+                </div>                
             </div>
-
             <div class="col-4 text-center">
-                <div class="row">
-                    
-
-                    <div class="col-6 text-start">
+                    <div class="row">
+                        <div class="col-6 text-start">
                         <div>Data de Emissão:</div>
                         <div>Data de Revisão:</div>
                         <div>Nº de Revisão:</div>
-                        
                     </div>
                     <div class="col-6">
                         <div>'||vDataAtual||'</div>
@@ -454,7 +437,7 @@ cHTML := cHTML||'</div>
         
         <div class="row">
                 <!-- #################### --- FIM tabela  Informações nutricional  -- ################################  -->
-                <div class="col-6">
+                <div class="col">
                     
                     <div class="caixa">
                         <div class="distaca fs-5 fw-bold text-center">
@@ -490,7 +473,6 @@ cHTML := cHTML||'</div>
                                       LOOP
                                         cHTML := cHTML||' 
                                         <tr>
-                                          <!--<th scope="row">'||TO_CHAR(I.ORDEM)||'</th>--->
                                           <td><p>'||TO_CHAR(I.DESCRICAO)||'</p></td>
                                           <td>'||TO_CHAR(I.QUANTIDADE)||'</td>
                                           <td>'||TO_CHAR(I.DIARIO)||'</td>
@@ -825,7 +807,7 @@ cHTML := cHTML||'</div>
                         </div>
                         <div class="row">
                             <div class="col-11 mx-auto ">
-                                <img class="  foto img-fluid mx-auto  " src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vEtiquetaSecundaria)|| '"/>                                
+                                <img class="  foto img-fluid mx-auto  " src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vEtiquetaSecundaria)|| '"/>                                
                             </div>                            
                                                                   
                         </div>
