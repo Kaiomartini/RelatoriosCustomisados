@@ -13,33 +13,54 @@ SELECT * FROM DGE_PRODUTOANEXO WHERE SEQPRODUTO = 2040
             e.inscrestadual as ie
             FROM GE_EMPRESA E  where e.nroempresa = 1 
 -- SELECT FICHA TECNICA 
-    SELECT                  
-            lpad(pe.gtin,14,0) as gtin,
-            pp.coddipoa AS DIPOA,
-            pp.prazovalidade||' '||DECODE(pp.Tipovalidade, 1,'Dias', 2,'Meses')as validade,                                               
-            DECODE(p.conservacao, 1,'Congelado', 2,'Resfriado', 3,'Ambiente')As Conservacao,
-            p.TempMinima||' '||'°C' As TempMinima,
-            p.TempMaxima||' '||'°C' As TempMaxima,
-            DECODE(pe.UNIDADE, 'CX', 'CAIXA', '') As Unidade,
-            pe.PesoMedio, 
-            (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF,
-
-            C.CODCLASSFISCAL,
-            Replace(Trim(To_char(c.CODNCM, '0999,90,00')), '.', ',')as NCM,
-            C.DESCRICAO as desNCM,
-            Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') as CEST,
-            C.DESCRICAOCEST 
-         FROM 
-            DGE_PRODUTO P,
-            Dge_Produtoplanta  pp,
-            DGE_PRODUTOEMBALAGEM Pe,
-            DGE_CLASSFISCAL C                          
-         WHERE 
-                P.SEQPRODUTO = Pe.Seqproduto
-            AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
-            AND P.SEQPRODUTO = PP.Seqproduto 
-            AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
-            AND P.SEQPRODUTO = 1002;
+     SELECT
+ (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF,
+ (select lpad(pe.gtin,14,0) from DGE_PRODUTOEMBALAGEM pe where pe.seqproduto  = 1002 and pe.menorunidcontrole = 'S') as gtinMenorControle, 
+ lpad(pe.gtin,14,0) as gtinUnidadePadrao,
+ p.descricao as descProduto,                                             
+ p.embprimaria, p.embsecundaria,
+ pp.coddipoa AS DIPOA,
+ pp.prazovalidade||' '||DECODE(pp.Tipovalidade, 1,'Dias', 2,'Meses')as validade,                                               
+ DECODE(p.conservacao, 1,'Congelado', 2,'Resfriado', 3,'Ambiente')As Conservacao,
+ p.TempMinima||'°C' As TempMinima,
+ p.TempMaxima||'°C' As TempMaxima,
+ pe.seqembalagem as seqUniPadrao,
+ DECODE(pe.UNIDADE, 'CX', 'CAIXA', '') As Unidade,
+ DECODE(pe.pesopadrao,'S','SIM','N','NÃO') AS pesopadrao,
+ pe.PesoMedio, pe.pesominimo, pe.pesomaximo,
+ Replace(Trim(To_char(c.CODNCM, '0999,90,00')), '.', ',')as NCM, C.DESCRICAO as desNCM,
+ Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') as CEST, C.DESCRICAOCEST,
+ DECODE(p.maturado,'S','SIM','N','NÃO') AS MATURADO, 
+ C.CODCLASSFISCAL
+ into
+    vCodSif,
+    vGtinUnidadePadrao, vGtinMenorControle,
+    vPdescricao,
+    vDesEmbalagemPrimaria, vDesEmbalagemSecundaria,
+    vDipoa,
+    vValidade,
+    vConservacao,
+    vTempMinima,
+    vTempMaxima,
+    vSeqUnidadePatrao,
+    vUnidadePatrao,
+    vPesoPadrao, vPesoMedio, vPesoMinimo, vPesomaximo,
+    vCodNcm, vDescNcm,
+    vCodCest, vDescCest,
+    vMaturado,
+    vCodClassFiscal
+    
+ FROM 
+    DGE_PRODUTO P,
+    Dge_Produtoplanta  pp,
+    DGE_PRODUTOEMBALAGEM Pe,
+    DGE_CLASSFISCAL C                          
+ WHERE 
+    P.SEQPRODUTO = Pe.Seqproduto
+    AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
+    AND  P.SEQPRODUTO = PP.Seqproduto 
+    AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
+    AND P.SEQPRODUTO = nSeqProduto;
 
 --- select descrição descricao 
 SELECT 
