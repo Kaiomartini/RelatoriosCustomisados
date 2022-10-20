@@ -1,6 +1,6 @@
 
 
-FUNCTION DGEFR_FichaTecnicaProdutoCMACMA(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
+FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
                                    nEmpresa ge_empresa.nroempresa%Type ) RETURN CLob IS
   
   cHTML CLob := Null;
@@ -8,7 +8,7 @@ FUNCTION DGEFR_FichaTecnicaProdutoCMACMA(nSeqProduto in DGE_PRODUTO.SeqProduto%T
   sRazaoSocial GE_Empresa.RazaoSocial%Type;
   vLogo BLOB := NULL;
   vDataAtual varchar2(10) := TO_CHAR(SYSDATE, 'DD/MM/YYYY'); 
-  -- Variaveis cidade inicio
+-- Variaveis cidade inicio
   vRazaosocial        GE_Empresa.RAZAOSOCIAL%Type := null;
   vNomeFantasia       GE_Empresa.FANTASIA%Type := null;
   vCNPJ1               GE_Empresa.CNPJENTIDADE%Type := null;
@@ -243,10 +243,15 @@ cHTML := cHTML ||'
         height: 70px;
         }
 
-        .div {
-            border: 0.001rem solid #000
+        @media print {
+            .caixa {                
+                page-break-inside: avoid;
+            }
+            .naoquebra {                
+                page-break-inside: avoid;
+            }
         }
-         .container {
+         .A4 {
             /*box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/ 
             margin: 3mm auto;
             width: 210mm;
@@ -255,7 +260,7 @@ cHTML := cHTML ||'
             height: 300mm;
         }
 
-       @ midia print .container {
+       @ midia print .A4 {
             /* box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/ 
             margin: 3mm auto;
             width: 210mm;
@@ -325,7 +330,7 @@ Select
 cHTML := cHTML||'
 <body class="text-uppercase">
 
-    <div class="container">
+    <div class="A4">
         <section id="cabesacho">
         <div class="row b1">
 
@@ -620,7 +625,7 @@ cHTML := cHTML||'</div>
                                          EM.unidade||'('||EM.quantidade||')' as Unidade
                                         from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
                                         where (E.Seqprodutodestino = 1002 or E.seqprodutodestino is null)
-                                        and E.tipo in(1) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto and Em.embalagemindustriapadrao = 'S'
+                                        and E.tipo in(2) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto and Em.embalagemindustriapadrao = 'S'
                                         and E.seqembalagemkit  = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM PO,dge_produtoembalagemkit KT where PO.Seqproduto = 1002 and PO.embalagemindustriapadrao = 'S'  and KT.seqembalagem = 227)
                                         order by Insumo)
                                         LOOP
@@ -663,7 +668,7 @@ cHTML := cHTML||'</div>
             
             <!-- #################### --- FIM bloco 6 -- ################################  -->
             </div>
-            <div class="container">
+            <div class="A4">
             <!-- #################### --- INICIO bloco 5 -- ################################  -->
             <div class="row text-center  fs-4 caixa">
                 <div class="distaca fw-bold">Especificação do produto</div>
@@ -756,7 +761,7 @@ cHTML := cHTML||'</div>
             <!-- #################### --- FIM bloco 5 -- ################################  -->
             </div>
             <!-- #################### --- Inicio bloco 6 -- ################################  -->
-            <div class="container">
+            <div class="A4">
             
             <div class="row text-center fw-bold fs-5 caixa">
                 <div class="distaca ">Foto do produto embalado</div>
@@ -804,88 +809,11 @@ cHTML := cHTML||'</div>
                 </div>
             </div>
 
-            <div class="container">
+            <div class="A4">
             <!-- #################### --- inicio bloco 7 -- ################################  -->
             
             
-            <div class="row">
             
-                <div class="col-6">
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            informações adicionais
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <p>validade:</p>
-                                <p>validade:</p>
-                                <p>validade:</p>
-                                <p>validade:</p>
-                                <p>validade:</p>
-                            </div>
-                    
-                            <div class="col-6">
-                                <p>90 dias:</p>
-                                <p>535:</p>
-                                <p>3254:</p>
-                                <p>51:</p>
-                                <p>nao:</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            informações adicionais
-                        </div> 
-                            <div class="row">
-                                <div class="col-6">
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                </div>           
-                            
-                                <div class="col-6">
-                                    <p>90 dias:</p>
-                                    <p>535:</p>
-                                    <p>3254:</p>
-                                    <p>51:</p>
-                                    <p>nao:</p>
-                                </div>
-                            </div>
-                    </div>
-                        
-                   
-                </div> 
-
-                <div class="col-6 ">
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            informações adicionais
-                        </div> 
-                            <div class="row">
-                                <div class="col-6">
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                    <p>validade:</p>
-                                </div>           
-                            
-                                <div class="col-6">
-                                    <p>90 dias:</p>
-                                    <p>535:</p>
-                                    <p>3254:</p>
-                                    <p>51:</p>
-                                    <p>nao:</p>
-                                </div>
-                            </div>
-                    </div>  
-                </div>                
-            </div>
             <div class="row ">
                 
                     <div class="col caixat">
@@ -930,15 +858,12 @@ cHTML := cHTML||'</div>
                             </div>           
                         </div>
                     </div>
-                </div> 
-
-                              
+                </div>                               
             </div>
             <!-- #################### --- FIM bloco 8 -- ################################  -->
             <!-- #################### --- inicio bloco 9 -- ################################  -->
             <div class="row">
                 <div class="col-12">
-                    
                     <div class="caixa">
                         <div class="distaca fs-5 fw-bold text-center">
                             Modelo da etiqueta testeira: imagem meramente ilustrativa
@@ -975,7 +900,7 @@ cHTML := cHTML||'</div>
             </div>
             <!-- #################### --- FIM bloco 9 -- ################################  -->
             </div>
-            <div class="container">
+            <div class="A4">
             <!-- #################### --- FIM bloco 10 -- ################################  -->
             <div class="row">
                 <div class="col-12">
@@ -1128,7 +1053,7 @@ cHTML := cHTML||'</div>
             </div>
             
 
-        </div><!--fim container -->
+        </div><!--fim A4 -->
 
 
         
@@ -1146,4 +1071,4 @@ cHTML := cHTML||'</div>
     When Others Then
        Return (cHTML);
    
-   END DGEFR_FichaTecnicaProdutoCMA;
+   END DGEFR_FichaTecnicaProduto;

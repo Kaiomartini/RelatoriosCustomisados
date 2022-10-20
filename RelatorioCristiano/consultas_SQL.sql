@@ -35,9 +35,9 @@ SELECT * FROM DGE_PRODUTOANEXO WHERE SEQPRODUTO = 2040
             DGE_PRODUTOEMBALAGEM Pe,
             DGE_CLASSFISCAL C                          
          WHERE 
-            P.SEQPRODUTO = Pe.Seqproduto
+                P.SEQPRODUTO = Pe.Seqproduto
             AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
-            AND  P.SEQPRODUTO = PP.Seqproduto 
+            AND P.SEQPRODUTO = PP.Seqproduto 
             AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
             AND P.SEQPRODUTO = 1002;
 
@@ -75,6 +75,8 @@ select P.SEQPRODUTO,
 -- select para buscar paremetros nas tabelas
 SELECT * FROM DBA_ALL_TABLES WHERE TABLE_NAME IN (
 SELECT TABLE_NAME FROM DBA_TAB_COLUMNS WHERE OWNER = 'TSTDATAVALE' AND COLUMN_NAME = 'SEQGRUPOCOMPRA')
+-- consulta informações nuricionais 
+select p.ordem, p.descricao,p.referencia as quantidade, p.vlrpercdiario as diario  from Dge_Produtocomposicao p where p.seqproduto = 1002 order by p.ordem 
 
 
 
@@ -97,7 +99,7 @@ SELECT TABLE_NAME FROM DBA_TAB_COLUMNS WHERE OWNER = 'TSTDATAVALE' AND COLUMN_NA
   vCidade GE_Empresa.cidade%Type := null; 
   vIE GE_Empresa.inscrestadual%Type := null;
 
-       ,
+     
 -- Variaveis cidade fim
   
   BEGIN
@@ -126,22 +128,10 @@ SELECT TABLE_NAME FROM DBA_TAB_COLUMNS WHERE OWNER = 'TSTDATAVALE' AND COLUMN_NA
          )
 
 
+-- SELECT IMAGEN DE MODELO DA ETIQUETA ETIQUETAS 
+ Select me.imagem, PM.TIPO
+ From  DIN_ProdutoModeloEtiqueta@DTVIND01 Pm, DIN_ModeloEtiqueta@DTVIND01 Me
+ Where Me.SeqModeloEtiqueta = Pm.SeqModeloEtiqueta and Pm.SeqProduto = 1002
 
-         <div class="col-6 quebra">
-                <div class="row">
-                    <div class="col fs-3 ">titulo do formulario </div>
-                </div>
-                <div class="row">
-                      
-                    <p class="fs-5 fw-bold">'||vNomeFantasia||'</p>    
-                    <p class="fs-6">'||vCNPJ||'</p>         
-                    <p class="fs-6">'||vDDD||'</p>
-                    <p class="fs-6">'||vTelefone ||'</p>    
-                    <p class="fs-6">'||vLogradouro||'</p>
-                    <p class="fs-6">'||vNumero ||'</p>       
-                    <p class="fs-6">'||vCep||'</p>
-                    <p class="fs-6">'||vCidade||'</p>
-                    <p class="fs-6">'||vIE||'</p>
-                    
-                </div>
-            </div>
+
+ --- SELECT MERCADO DESTICO
