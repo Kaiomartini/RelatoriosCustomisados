@@ -175,3 +175,6 @@ into
 FROM 
     GE_EMPRESA E  
 where e.nroempresa = vEmpresa; 
+
+
+   

@@ -1,110 +1,118 @@
-
 FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
                                    nEmpresa ge_empresa.nroempresa%Type ) RETURN CLob IS
-  
-  cHTML CLob := Null;
-  vEmpresa ge_empresa.nroempresa%TYPE := nEmpresa;
-  sRazaoSocial GE_Empresa.RazaoSocial%Type;
-  vLogo BLOB := NULL;
-  vDataAtual varchar2(10) := TO_CHAR(SYSDATE, 'DD/MM/YYYY'); 
+    
+    cHTML               CLob := Null;
+    vEmpresa            ge_empresa.nroempresa%TYPE := nEmpresa;
+    sRazaoSocial        GE_Empresa.RazaoSocial%Type;
+    vLogo               BLOB := NULL;
+    vDataAtual          varchar2(10) := TO_CHAR(SYSDATE, 'DD/MM/YYYY'); 
 -- Variaveis cidade inicio
-  vRazaosocial        GE_Empresa.RAZAOSOCIAL%Type := null;
-  vNomeFantasia       GE_Empresa.FANTASIA%Type := null;
-  vCNPJ1              GE_Empresa.CNPJENTIDADE%Type := null;
-  vCNPJ               varchar2(50):= null;  
-  vDDD                GE_Empresa.TELEVENDASDDD%Type := null;
-  vTelefone           GE_Empresa.TELEVENDASNRO%Type := null; 
-  vLogradouro         GE_Empresa.endereco%Type := null; 
-  vNumero             GE_Empresa.endereconro%Type := null; 
-  vCep                GE_Empresa.cep%Type := null; 
-  vCidade             GE_Empresa.cidade%Type := null; 
-  vIE                 GE_Empresa.inscrestadual%Type := null;
+    vRazaosocial        GE_Empresa.RAZAOSOCIAL%Type := null;
+    vNomeFantasia       GE_Empresa.FANTASIA%Type := null;
+    vCNPJ1              GE_Empresa.CNPJENTIDADE%Type := null;
+    vCNPJ               varchar2(50):= null;  
+    vDDD                GE_Empresa.TELEVENDASDDD%Type := null;
+    vTelefone           GE_Empresa.TELEVENDASNRO%Type := null; 
+    vLogradouro         GE_Empresa.endereco%Type := null; 
+    vNumero             GE_Empresa.endereconro%Type := null; 
+    vCep                GE_Empresa.cep%Type := null; 
+    vCidade             GE_Empresa.cidade%Type := null; 
+    vIE                 GE_Empresa.inscrestadual%Type := null;
 
 -- FICHA TECNICA do produto
-   vCodSif varchar2(500);
-   vGtinUnidadePadrao varchar2(500);
-   vGtinMenorControle varchar2(500);
-   vPdescricao varchar2(500);
+   vCodSif              varchar2(500);
+   vGtinUnidadePadrao   varchar2(500);
+   vGtinMenorControle   varchar2(500);
+   vPdescricao          varchar2(500);
    vDesEmbalagemPrimaria   varchar2(500);
    vDesEmbalagemSecundaria varchar2(500);
-   vDipoa varchar2(500);
-   vValidade varchar2(500);
-   vConservacao varchar2(500);
-   vTempMinima varchar2(500);
-   vTempMaxima varchar2(500);
-   vSeqUnidadePatrao varchar2(500);    
-   vUnidadePatrao varchar2(500);    
-   vPesoPadrao varchar2(500);
-   vPesoMedio varchar2(500);
-   vPesoMinimo varchar2(500);
-   vPesoMaximo varchar2(500);
-   vCodNcm varchar2(500);
-   vDescNcm varchar2(500);
-   vCodCest varchar2(500);
-   vDescCest varchar2(500);
-   vMaturado varchar2(500);
-   vCodClassFiscal varchar2(500);
+   vDipoa               varchar2(500);
+   vValidade            varchar2(500);
+   vConservacao         varchar2(500);
+   vTempMinima          varchar2(500);
+   vTempMaxima          varchar2(500);
+   vSeqUnidadePatrao    varchar2(500);    
+   vUnidadePatrao       varchar2(500);    
+   vPesoPadrao          varchar2(500);
+   vPesoMedio           varchar2(500);
+   vPesoMinimo          varchar2(500);
+   vPesoMaximo          varchar2(500);
+   vCodNcm              varchar2(500);
+   vDescNcm             varchar2(500);
+   vCodCest             varchar2(500);
+   vDescCest            varchar2(500);
+   vMaturado            varchar2(500);
+   vCodClassFiscal      varchar2(500);
   
 -- DESCRIÇÃO DO PRODUTO
-  vIdiomaTipoInd varchar2(500);
-  vDesTipoInd varchar2(500);
-  vIdiomaInd varchar2(500);
-  vDesInd varchar2(500);
+  vIdiomaTipoInd    varchar2(500);
+  vDesTipoInd       varchar2(500);
+  vIdiomaInd        varchar2(500);
+  vDesInd           varchar2(500);
   
 -- Especificação e caracteristicas do corte 
-  vEspecificacaoProduto varchar2(500);
-  vCaracteristicaQualidade varchar2(500);
-  vCaracteristicaProcesso varchar2(500);
+  vEspecificacaoProduto     varchar2(500);
+  vCaracteristicaQualidade  varchar2(500);
+  vCaracteristicaProcesso   varchar2(500);
   
 -- IMAGEMSDO PRODUTO
-   vCorteFrente BLOB := NULL;
-   vCorteVerso BLOB := NULL;
+   vCorteFrente             BLOB := NULL;
+   vCorteVerso              BLOB := NULL;
    
-   vProEmbPriFrente BLOB := NULL;   
-   vProEmbPriVerso BLOB := NULL; 
+   vProEmbPriFrente         BLOB := NULL;   
+   vProEmbPriVerso          BLOB := NULL; 
    
-   vProEmbSecFrente BLOB := NULL; 
-   vProEmbSecVerso BLOB := NULL;
+   vProEmbSecFrente         BLOB := NULL; 
+   vProEmbSecVerso          BLOB := NULL;
    
 -- IMAGEM ETIQUETA 
-   vEtiquetaPrimaria BLOB := NULL; 
-   vEtiquetaSecundaria BLOB := NULL;
+   vEtiquetaPrimaria        BLOB := NULL; 
+   vEtiquetaSecundaria      BLOB := NULL;
    
 -- ESTILO DA CONDIÇÃO 
-   vStyle CLOB:= NULL;
+   vStyle                   CLOB:= NULL;
 
-  BEGIN
+BEGIN
    --condição para mostrar INFORMAÇÃO NUTRICIONAL  
-      for i in (select count(p.ordem) as coluna 
-      from Dge_Produtocomposicao p
-      where p.seqproduto = 2222222 and p.ordem > 1  order by p.ordem)
+for i in (
+        select 
+              count(p.ordem) as coluna 
+        from  Dge_Produtocomposicao p
+        where p.seqproduto = 2222222 
+              and p.ordem > 1  
+        order by p.ordem
+        )
       loop
         if i.coluna = 0 then
-             vStyle:= '
+           vStyle:= '
              <style>
-             .oculta{display:none;}
-             @media print{.oculta{display:none;}}
-             </style>';
+                    .oculta{display:none;}
+                    @media print{.oculta{display:none;}}
+             </style>
+           ';
         end if; 
       end loop;
      
    --SELECT IMAGEM DAS ETIQUETAS
-fOR I IN(
-       Select me.imagem as img, PM.TIPO as tipo
-       From  DIN_ProdutoModeloEtiqueta@DTVIND01 Pm, DIN_ModeloEtiqueta@DTVIND01 Me
-       Where Me.SeqModeloEtiqueta = Pm.SeqModeloEtiqueta and Pm.SeqProduto = nSeqProduto
-      )
+fOR I IN
+          (Select
+              me.imagem as img, PM.TIPO as tipo
+           From
+              DIN_ProdutoModeloEtiqueta@DTVIND01 Pm, DIN_ModeloEtiqueta@DTVIND01 Me
+           Where 
+              Me.SeqModeloEtiqueta = Pm.SeqModeloEtiqueta and Pm.SeqProduto = nSeqProduto)
+      
       LOOP
        if I.TIPO = 1 THEN
-       vEtiquetaPrimaria := i.img;
+        vEtiquetaPrimaria := i.img;
        else
-       vEtiquetaSecundaria := i.img;
+        vEtiquetaSecundaria := i.img;
        end if;
       END LOOP;
       
    --SELECT IMAGENS DO PRODUTO 
-FOR I IN(
-     SELECT 
+FOR I IN
+         (SELECT 
                pa.seqproduto,               
                pa.seqprodutoanexo,
                AA.CODLINK,
@@ -117,21 +125,22 @@ FOR I IN(
                     AND aa.TabLink = 'DGE_PRODUTOANEXO'
                     AND pa.SeqProduto = nSeqProduto                    
                ORDER BY pa.codigo)
+               
      LOOP
          if i.ordem = 1 and i.descimg  = 'FRENTE' then
-         vCorteFrente := i.img;
+               vCorteFrente := i.img;
          elsif i.ordem = 1 and i.descimg  = 'VERSO' then
-         vCorteVerso := i.img;
+               vCorteVerso := i.img;
          
          elsif i.ordem = 2 and i.descimg  = 'FRENTE' then
-         vProEmbPriFrente := i.img;
+               vProEmbPriFrente := i.img;
          elsif i.ordem = 2 and i.descimg  = 'VERSO' then
-         vProEmbPriVerso := i.img;
+               vProEmbPriVerso := i.img;
          
          elsif i.ordem = 3 and i.descimg  = 'FRENTE' then
-         vProEmbSecFrente := i.img;
+               vProEmbSecFrente := i.img;
          elsif i.ordem = 3 and i.descimg  = 'VERSO' then
-         vProEmbSecVerso := i.img;         
+               vProEmbSecVerso := i.img;         
          END if;  
            
      END LOOP;
@@ -201,7 +210,7 @@ for I in
         AND PD.TIPODESCRICAO IN (5,4) 
         AND PD.SEQPRODUTO = nSeqProduto) 
   loop
-      IF i.seq =  19336 then
+      if i.seq =  19336 then
         vEspecificacaoProduto := i.descricao;
         elsif i.seq =  19334 then
         vCaracteristicaQualidade := i.descricao;
@@ -245,7 +254,8 @@ SELECT
       vLogo            
   FROM 
       GE_EMPRESA E  
-  where e.nroempresa = vEmpresa;
+  where 
+      e.nroempresa = vEmpresa;
  --============ INICIO HTML ====================
 cHTML := cHTML ||'
 <!-- 
@@ -400,7 +410,8 @@ cHTML := cHTML ||'
         <div class="row text-center fw-bold distaca">
             <div class="col-2 my-auto">Tipo produto</div>
             <div class="col-8 text-center my-auto fs-4 border-end border-start border-secondary">
-                '||To_char(nSeqProduto)||'-'||vPdescricao||'</div>
+                '||To_char(nSeqProduto)||'-'||vPdescricao||'
+            </div>
             <div class="col-2 my-auto">
                 <div class="row my-3 ">
                     <div class="col-12">'||vConservacao||'</div>
@@ -410,7 +421,6 @@ cHTML := cHTML ||'
             </div>
         </div>
         <div class="row">
-
             <div class="col-12">
                 <div class="row border-dark mt-1">
                     <div class="col-2  fw-bold ">
@@ -456,9 +466,7 @@ cHTML := cHTML ||'
                         <p>'||vDescCest||'</p>
                     </div>
                 </div>
-
             </div>
-
         </div>
 
         <!-- #################### --- FIM bloco 2 -- ################################  -->
@@ -492,13 +500,18 @@ cHTML := cHTML ||'
                                     </tr>
                                 </thead>
                                 <tbody class="text-break">';
-                                    FOR i IN(
-                                    select p.ordem,
-                                    p.descricao,
-                                    p.referencia as quantidade,
-                                    p.vlrpercdiario as diario
-                                    from Dge_Produtocomposicao p
-                                    where p.seqproduto = nSeqProduto and p.ordem > 1 order by p.ordem )
+                                    FOR i IN
+                                         (select 
+                                            p.ordem,
+                                            p.descricao,
+                                            p.referencia as quantidade,
+                                            p.vlrpercdiario as diario
+                                          from 
+                                            Dge_Produtocomposicao p
+                                          where 
+                                            p.seqproduto = nSeqProduto 
+                                            and p.ordem > 1 
+                                          order by p.ordem)
                                     LOOP
                                     cHTML := cHTML||'
                                     <tr>
@@ -630,43 +643,51 @@ cHTML := cHTML ||'
                                 </thead>
                                 <tbody class="text-break">
                                     ';
-                                    FOR i IN(
-                                    select p.seqproduto as CÓDIGO,p.descricao as descrição,
-                                    decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
-                                    EM.unidade||'('||EM.quantidade||')' as Unidade
-                                    from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
-                                    where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
-                                    and E.tipo in(1) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
-                                    and Em.embalagemindustriapadrao = 'S'
-                                    and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM
-                                    PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and
-                                    PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
-                                    order by Insumo
-                                    )
+                                    FOR i IN
+                                          (select 
+                                              p.seqproduto as CÓDIGO,p.descricao as descrição,
+                                              decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
+                                              EM.unidade||'('||EM.quantidade||')' as Unidade
+                                          from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
+                                          where 
+                                              (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
+                                              and E.tipo in(1) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
+                                              and Em.embalagemindustriapadrao = 'S'
+                                              and E.seqembalagemkit = (select 
+                                                                         kt.seqembalagemkit 
+                                                                       from 
+                                                                         dge_PRODUTOEMBALAGEM
+                                                                         PO,dge_produtoembalagemkit KT 
+                                                                       where 
+                                                                         PO.Seqproduto = nSeqProduto 
+                                                                         and PO.embalagemindustriapadrao = 'S' 
+                                                                         and KT.seqembalagem = vSeqUnidadePatrao)
+                                          order by Insumo)
+                                    
                                     LOOP
-                                    if i.insumo = 'SUBSTITUTO' then
-                                    cHTML := cHTML||'
-                                    <tr class="text-danger">
-                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                        <td>
-                                            <p>'||TO_CHAR(i.descrição)||'</p>
-                                        </td>
-                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
-                                    </tr>
-                                    ';
-                                    else
-                                    cHTML := cHTML||'
-                                    <tr>
-                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                        <td>
-                                            <p>'||TO_CHAR(i.descrição)||'</p>
-                                        </td>
-                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
-                                    </tr>
-                                    ';
-                                    END IF;
+                                        if i.insumo = 'SUBSTITUTO' then
+                                            cHTML := cHTML||'
+                                            <tr class="text-danger">
+                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                                <td>
+                                                    <p>'||TO_CHAR(i.descrição)||'</p>
+                                                </td>
+                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                            </tr>
+                                            ';
+                                        else
+                                            cHTML := cHTML||'
+                                            <tr>
+                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                                <td>
+                                                    <p>'||TO_CHAR(i.descrição)||'</p>
+                                                </td>
+                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                            </tr>
+                                            ';
+                                        END IF;
                                     END LOOP;
 
                                     cHTML := cHTML||'
@@ -701,19 +722,26 @@ cHTML := cHTML ||'
                                 </thead>
                                 <tbody class="text-break">
                                     ';
-                                    FOR i IN(
-                                    select p.seqproduto as CÓDIGO,p.descricao as descrição,
-                                    decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
-                                    EM.unidade||'('||EM.quantidade||')' as Unidade
-                                    from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
-                                    where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
-                                    and E.tipo in(2) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
-                                    and Em.embalagemindustriapadrao = 'S'
-                                    and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM
-                                    PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and
-                                    PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
-                                    order by Insumo
-                                    )
+                                    FOR i IN
+                                         (select 
+                                              p.seqproduto as CÓDIGO,p.descricao as descrição,
+                                              decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
+                                              EM.unidade||'('||EM.quantidade||')' as Unidade
+                                          from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
+                                          where 
+                                              (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
+                                              and E.tipo in(2) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
+                                              and Em.embalagemindustriapadrao = 'S'
+                                              and E.seqembalagemkit = (select 
+                                                                         kt.seqembalagemkit 
+                                                                       from 
+                                                                         dge_PRODUTOEMBALAGEM
+                                                                         PO,dge_produtoembalagemkit KT 
+                                                                       where 
+                                                                         PO.Seqproduto = nSeqProduto 
+                                                                         and PO.embalagemindustriapadrao = 'S' 
+                                                                         and KT.seqembalagem = vSeqUnidadePatrao)
+                                          order by Insumo)
                                     LOOP
                                     if i.insumo = 'SUBSTITUTO' then
                                     cHTML := cHTML||'
@@ -992,11 +1020,12 @@ cHTML := cHTML ||'
 </body>
 
 </html>';
-            RETURN(cHTML);
+
+    RETURN(cHTML);     
       
-      
-   Exception
+Exception
+
     When Others Then
        Return (cHTML);
-   
-   END DGEFR_FichaTecnicaProduto;
+
+END DGEFR_FichaTecnicaProduto;
