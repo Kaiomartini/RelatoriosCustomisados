@@ -1,3 +1,4 @@
+
 FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type, 
                                    nEmpresa ge_empresa.nroempresa%Type ) RETURN CLob IS
   
@@ -69,10 +70,24 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    vEtiquetaPrimaria BLOB := NULL; 
    vEtiquetaSecundaria BLOB := NULL;
    
-   
-   
+-- ESTILO DA CONDIÇÃO 
+   vStyle CLOB:= NULL;
 
   BEGIN
+   --condição para mostrar INFORMAÇÃO NUTRICIONAL  
+      for i in (select count(p.ordem) as coluna 
+      from Dge_Produtocomposicao p
+      where p.seqproduto = 2222222 and p.ordem > 1  order by p.ordem)
+      loop
+        if i.coluna = 0 then
+             vStyle:= '
+             <style>
+             .oculta{display:none;}
+             @media print{.oculta{display:none;}}
+             </style>';
+        end if; 
+      end loop;
+     
    --SELECT IMAGEM DAS ETIQUETAS
 fOR I IN(
        Select me.imagem as img, PM.TIPO as tipo
@@ -232,7 +247,7 @@ SELECT
       GE_EMPRESA E  
   where e.nroempresa = vEmpresa;
  --============ INICIO HTML ====================
-cHTML := cHTML ||'    
+cHTML := cHTML ||'
 <!-- 
 1.cabesalho
 2.tipo produto
@@ -250,6 +265,7 @@ cHTML := cHTML ||'
 
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -259,35 +275,34 @@ cHTML := cHTML ||'
     <style>
         html {
             font-size: 11px;
-        }      
-
+        }
         .logo {
-        width: 100%;
-        height: 70px;
+            width: 100%;
+            height: 70px;
         }
-
         @media print {
-            .caixa {                
+            .caixa {
                 page-break-inside: avoid;
             }
-            .naoquebra {                
+
+            .naoquebra {
                 page-break-inside: avoid;
             }
+
             .A4 {
-            page-break-before: always;
+                page-break-before: always;
             }
         }
-        
-         .A4 {
-            /*box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/ 
+        .A4 {
+            /*box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/
             margin: 3mm auto;
             width: 210mm;
             padding: 0mm 0mm;
             background-color: #fff;
-            
+
         }
 
-       /*@midia print .A4 {
+        /*@midia print .A4 {
             \* box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*\ 
             margin: 3mm auto;
             width: 210mm;
@@ -296,602 +311,684 @@ cHTML := cHTML ||'
             height: 300mm;
         }*/
         /* body{background-color: #dadada;} */
-
         .pquebra {
             overflow-wrap: break-word;
             word-wrap: break-word;
             word-break: break-word;
         }
-
         .distaca {
             background-color: #ddd;
             font-weight: bold;
 
         }
-
         .foto {
             margin: 5px auto 5px auto;
-            max-height:250px;
+            max-height: 250px;
             min-height: 200px;
             width: auto;
             height: auto;
-            
+
         }
-        .caixa{
-            /* border: 1px solid #9b9999; */
-            border: 2px solid #ddd;
-            /*margin-bottom: 20px;*/
-            /* box-shadow: -3px 3px 4px #777; */
-        }
-        .caixat{
+        .caixa {border: 2px solid #ddd;}
+        .caixat {
             border: 1px solid #9b9999;
             margin-bottom: 20px;
             box-shadow: -5px 5px 0px #666;
             background-color: #ddd;
         }
-        .caixa-etiqueta{
-            height: 250px;
-        }
-        p{
+        .caixa-etiqueta { height: 250px;}
+        p {
             margin: 0px;
             padding: 0px 5px 0px 5px;
         }
-        .border{
+        .border {
             border-color: rgb(19, 19, 19);
             border: 2px solid #000;
         }
-        .table>:not(caption)>*>* 
-        {
-        padding: .0 0.5rem;
-        }
-        .table{
-        margin: 0px;
-        }
-        
+        .table>:not(caption)>*>* {padding: .0 0.5rem;}
+        .table {  margin: 0px;}
     </style>
-    
+    '||vStyle||'
 </head>
+
 <body class="text-uppercase">
 
     <div class="A4">
         <section id="cabesacho">
-        <div class="row b1">
-            <div class="col-2">
-                 <img class="logo img-fluid" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />
-            </div>
-            <div class="col-6 quebra">
-                <div class="row text-center ">
-                    <p class="fs-5 fw-bold">'||TO_CHAR(vNomeFantasia)||'</p> 
-                    <p class="fs-6">'||'Local: '||TO_CHAR(vCidade)||' - '||TO_CHAR(vLogradouro)||' - '||TO_CHAR(vNumero)||'</p>
-                    <p class="fs-6">'||'CNPJ: '||TO_CHAR(vCNPJ)||'IE:'||TO_CHAR(vIE)||'</p>                      
-                    <p class="fs-6 d-inline"> Telefone:('||TO_CHAR(vDDD)||')'||TO_CHAR(vTelefone)||'</p>
-                    <p class="fs-6 d-inline">'||'CEP: '||TO_CHAR(vCep)||'</p>                        
-                </div>                
-            </div>
-            <div class="col-4 text-center">
-                    <div class="row">
-                        <div class="col-6 text-start">
-                        <div>Data de Emissão:</div>
-                        <div>Data de Revisão:</div>
-                        <div>Nº de Revisão:</div>
-                    </div>
-                    <div class="col-6">
-                        <div>'||vDataAtual||'</div>
-                        <div>'||vDataAtual||'</div>
-                        <div>01</div>
-                        
+            <div class="row b1">
+                <div class="col-2">
+                    <img class="logo img-fluid"
+                        src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />
+                </div>
+                <div class="col-6 quebra">
+                    <div class="row text-center ">
+                        <p class="fs-5 fw-bold">'||TO_CHAR(vNomeFantasia)||'</p>
+                        <p class="fs-6">'||'Local: '||TO_CHAR(vCidade)||' - '||TO_CHAR(vLogradouro)||' -
+                            '||TO_CHAR(vNumero)||'</p>
+                        <p class="fs-6">'||'CNPJ: '||TO_CHAR(vCNPJ)||'IE:'||TO_CHAR(vIE)||'</p>
+                        <p class="fs-6 d-inline"> Telefone:('||TO_CHAR(vDDD)||')'||TO_CHAR(vTelefone)||'</p>
+                        <p class="fs-6 d-inline">'||'CEP: '||TO_CHAR(vCep)||'</p>
                     </div>
                 </div>
-            </div>
-            <div class="row ">
-                  <div class="col fs-3 text-center border-top fw-bold"><p>Ficha tecnica do produto</p></div>
-            </div>
+                <div class="col-4 text-center">
+                    <div class="row">
+                        <div class="col-6 text-start">
+                            <div>Data de Emissão:</div>
+                            <div>Data de Revisão:</div>
+                            <div>Nº de Revisão:</div>
+                        </div>
+                        <div class="col-6">
+                            <div>'||vDataAtual||'</div>
+                            <div>'||vDataAtual||'</div>
+                            <div>01</div>
 
-        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col fs-3 text-center border-top fw-bold">
+                        <p>Ficha tecnica do produto</p>
+                    </div>
+                </div>
+
+            </div>
         </section>
-        
+
         <!-- #################### --- FIM bloco 1 -- ################################  -->
-        
+
         <!-- #################### --- INICIO bloco 2 -- ################################  -->
         <div class="row text-center fw-bold distaca">
             <div class="col-2 my-auto">Tipo produto</div>
-            <div class="col-8 text-center my-auto fs-4 border-end border-start border-secondary"> '||To_char(nSeqProduto)||'-'||vPdescricao||'</div>
+            <div class="col-8 text-center my-auto fs-4 border-end border-start border-secondary">
+                '||To_char(nSeqProduto)||'-'||vPdescricao||'</div>
             <div class="col-2 my-auto">
                 <div class="row my-3 ">
-                  <div class="col-12">'||vConservacao||'</div>
-                  <div class="col-6">min'||vTempMaxima||'</div>
-                  <div class="col-6">max'||vTempMinima||'</div>
+                    <div class="col-12">'||vConservacao||'</div>
+                    <div class="col-6">min'||vTempMaxima||'</div>
+                    <div class="col-6">max'||vTempMinima||'</div>
                 </div>
             </div>
         </div>
         <div class="row">
-        
+
             <div class="col-12">
                 <div class="row border-dark mt-1">
-                    <div class="col-2  fw-bold "><p class="my-auto">Industrial</p></div>
-                    <div class="col-2  "><p>'||vIdiomaInd||'</p></div>
-                    <div class="col-8  "><p>'||vDesInd||'</p></div>
+                    <div class="col-2  fw-bold ">
+                        <p class="my-auto">Industrial</p>
+                    </div>
+                    <div class="col-2  ">
+                        <p>'||vIdiomaInd||'</p>
+                    </div>
+                    <div class="col-8  ">
+                        <p>'||vDesInd||'</p>
+                    </div>
                 </div>
                 <div class="row border-dark  mt-1">
-                    <div class="col-2  fw-bold "><p class="my-auto">TipoIndustrial</p></div>
-                    <div class="col-2  "><p>'||vIdiomaTipoInd||'</p></div>
-                    <div class="col-8  "><p>'||vDesTipoInd||'</p></div>
+                    <div class="col-2  fw-bold ">
+                        <p class="my-auto">TipoIndustrial</p>
+                    </div>
+                    <div class="col-2  ">
+                        <p>'||vIdiomaTipoInd||'</p>
+                    </div>
+                    <div class="col-8  ">
+                        <p>'||vDesTipoInd||'</p>
+                    </div>
                 </div>
                 <div class="row border-dark mt-1">
-                    <div class="col-2 fw-bold "><p class="my-auto">NCM</p></div>
-                    <div class="col-2 "><p>'||vCodNcm||'</p></div>
-                    <div class="col-8 "><p>'||vDescNcm||'</p></div>
+                    <div class="col-2 fw-bold ">
+                        <p class="my-auto">NCM</p>
+                    </div>
+                    <div class="col-2 ">
+                        <p>'||vCodNcm||'</p>
+                    </div>
+                    <div class="col-8 ">
+                        <p>'||vDescNcm||'</p>
+                    </div>
                 </div>
                 <div class="row border-dark  mt-1">
-                    <div class="col-2  fw-bold "><p class="my-auto">CEST</p></div>
-                    <div class="col-2 "><p>'||vCodCest||'</p></div>
-                    <div class="col-8  "><p>'||vDescCest||'</p></div>
-                </div>                 
-                
+                    <div class="col-2  fw-bold ">
+                        <p class="my-auto">CEST</p>
+                    </div>
+                    <div class="col-2 ">
+                        <p>'||vCodCest||'</p>
+                    </div>
+                    <div class="col-8  ">
+                        <p>'||vDescCest||'</p>
+                    </div>
+                </div>
+
             </div>
-            
+
         </div>
 
         <!-- #################### --- FIM bloco 2 -- ################################  -->
         <!-- #################### --- INICIO bloco TABELA INFORMAÇÃO -- ################################  -->
-        
+
         <div class="row">
-                <!-- #################### --- FIM tabela  Informações nutricional  -- ################################  -->
-                <div class="col">
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Informações nutricionais    
-                        </div>
-                        <div class="bg-alert fs-5 fw-bold text-center">
-                            Porção de 100g-(1 bife medio)  
-                        </div>
-                        <div class="row">
-                            <div  class="mx-auto col-12">
-                                
-                                <table class="table align-middle table-bordered border table-striped">
-                                    
-                                    <thead>
-                                  <!--<tr>
+            <!-- #################### --- FIM tabela  Informações nutricional  -- ################################  -->
+            <div class="col oculta">
+
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Informações nutricionais
+                    </div>
+                    <div class="bg-alert fs-5 fw-bold text-center">
+                        Porção de 100g-(1 bife medio)
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border table-striped">
+
+                                <thead>
+                                    <!--<tr>
                                         <th class="test-center" colspan="4" width="50px">Porção de 100g-(1 bife medio)</th>                                                                             
                                       </tr>-->
-                                      <tr>
+                                    <tr>
                                         <!--<th width="50px">ID</th>-->
                                         <th width="200px">descrisao</th>
                                         <th width="50">quantidade</th>
-                                        <th width="50">Valor Diaria</th>                                        
-                                      </tr>
-                                    </thead>
-                                    <tbody class="text-break">';
+                                        <th width="50">Valor Diaria</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-break">';
                                     FOR i IN(
-                                      select p.ordem,
-                                       p.descricao,
-                                       p.referencia as quantidade,
-                                       p.vlrpercdiario as diario  
-                                      from Dge_Produtocomposicao p 
-                                      where p.seqproduto = nSeqProduto and p.ordem > 1  order by p.ordem )
-                                      LOOP
-                                        cHTML := cHTML||' 
-                                        <tr>
-                                          <td><p>'||TO_CHAR(I.DESCRICAO)||'</p></td>
-                                          <td>'||TO_CHAR(I.QUANTIDADE)||'</td>
-                                          <td>'||TO_CHAR(I.DIARIO)||'</td>
-                                        </tr>
-                                      ';
-                                      END LOOP;
-                                    cHTML := cHTML||' 
-                                      
-                                      
-                                    </tbody>
-                                  </table>
-                            </div>
+                                    select p.ordem,
+                                    p.descricao,
+                                    p.referencia as quantidade,
+                                    p.vlrpercdiario as diario
+                                    from Dge_Produtocomposicao p
+                                    where p.seqproduto = nSeqProduto and p.ordem > 1 order by p.ordem )
+                                    LOOP
+                                    cHTML := cHTML||'
+                                    <tr>
+                                        <td>
+                                            <p>'||TO_CHAR(I.DESCRICAO)||'</p>
+                                        </td>
+                                        <td>'||TO_CHAR(I.QUANTIDADE)||'</td>
+                                        <td>'||TO_CHAR(I.DIARIO)||'</td>
+
+                                    </tr>
+                                    ';
+                                    END LOOP;
+                                    cHTML := cHTML||'
+
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                 <!-- #################### --- FIM TABELA -- ################################  -->
-                 <!-- #################### --- INICIO TABELA INFORMASAO GERAL -- ################################  -->
-                
-                <div class="col-6">                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Informações Gerais    
-                        </div>                        
-                        <div class="row">
-                            <div  class="mx-auto col-12">
-                                
-                                <table class="table align-middle table-bordered border table-striped">
-                                    
-                                                                  
-                                    <tbody class="text-break">
-                                        
-                                        <tr>           
-                                          <th scope="row"><p>Código GTIN:</p></th>
-                                          <td><p>'||vGtinUnidadePadrao||'</p></td>
-                                        </tr>
-                                        <tr>           
-                                          <th scope="row"><p>Código DIPOA:</p></th>
-                                          <td><p>'||vDipoa||'</p></td>
-                                        </tr>
-                                        <tr>           
-                                            <th scope="row"><p>Código SIF:</p></th>
-                                            <td><p>'||vCodSif||'</p></td>
-                                        </tr>
-                                        <tr>           
-                                          <th scope="row"><p>Validade:</p></th>
-                                          <td><p>'||vValidade||'</p></td>
-                                        </tr>
-                                        <tr>           
-                                          <th scope="row"><p>Peso Medio:</p></th>
-                                          <td><p>'||vPesoMedio||'</p></td>
-                                        </tr>
-                                        <tr>           
-                                          <th scope="row"><p>Emb. Padrao:</p></th>
-                                          <td><p>'||vUnidadePatrao||'</p></td>
-                                        </tr>
-                                        
-                                        <tr>           
-                                          <th scope="row"><p>Maturado:</p></th>
-                                          <td><p>'||vMaturado||'</p></td>
-                                        </tr>
-                                                                           
-                                                                           
-                                    </tbody>
-                                  </table>
-                               
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                 <!-- #################### --- FIM TABELA INFORMASAO GERAL -- ################################  -->
             </div>
-        
-        
+            <!-- #################### --- FIM TABELA -- ################################  -->
+            <!-- #################### --- INICIO TABELA INFORMASAO GERAL -- ################################  -->
+
+            <div class="col">
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Informações Gerais
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border table-striped">
+
+
+                                <tbody class="text-break">
+
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Código GTIN:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vGtinUnidadePadrao||'</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Código DIPOA:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vDipoa||'</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Código SIF:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vCodSif||'</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Validade:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vValidade||'</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Peso Medio:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vPesoMedio||'</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Emb. Padrao:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vUnidadePatrao||'</p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">
+                                            <p>Maturado:</p>
+                                        </th>
+                                        <td>
+                                            <p>'||vMaturado||'</p>
+                                        </td>
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #################### --- FIM TABELA INFORMASAO GERAL -- ################################  -->
+        </div>
+
+
         <!-- #################### --- INICIO bloco 3 -- ################################  -->
-        
-             <div class="row"> <!-- #################### --- FIM tabela ENBALAGEM PRIMARIA -- ################################  -->
-                <div class="col-12">
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Insumos para cadastrar a tara da embalagem primária  
-                        </div>
-                        <div class="row">
-                            <div  class="mx-auto col-12">
-                                
-                                <table class="table align-middle table-bordered border">
-                                    <!-- <caption>List of users</caption> -->
-                                    <thead>
-                                      <tr class="text-center">
+
+        <div class="row">
+            <!-- #################### --- FIM tabela ENBALAGEM PRIMARIA -- ################################  -->
+            <div class="col-12">
+
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Insumos para cadastrar a tara da embalagem primária
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border">
+                                <thead>
+                                    <tr class="text-center">
                                         <th width="50px">Código</th>
-                                        <th width="200px">Descrição</th>                                        
+                                        <th width="200px">Descrição</th>
                                         <th width="50">Insumo</th>
                                         <th width="50">Unidade</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody class="text-break">
+                                    </tr>
+                                </thead>
+                                <tbody class="text-break">
                                     ';
-                                      FOR i IN(
-                                              select p.seqproduto as CÓDIGO,p.descricao as descrição,
-                                              decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
-                                              EM.unidade||'('||EM.quantidade||')' as Unidade
-                                              from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
-                                              where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
-                                              and E.tipo in(1) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto and Em.embalagemindustriapadrao = 'S'
-                                              and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
-                                              order by Insumo
-                                              )
-                                        LOOP
-                                              if i.insumo = 'SUBSTITUTO' then
-                                              cHTML := cHTML||' 
-                                              <tr class="text-danger" >
-                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                                <td><p>'||TO_CHAR(i.descrição)||'</p></td>
-                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>                                        
-                                              </tr>
-                                              ';
-                                              else
-                                              cHTML := cHTML||' 
-                                              <tr>
-                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                                <td><p>'||TO_CHAR(i.descrição)||'</p></td>
-                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>                                        
-                                              </tr>
-                                              ';
-                                              END IF;
-                                      END LOOP;
-                                      
-                      cHTML := cHTML||' 
-                                    </tbody>
-                                  </table>
-                                
-                            </div>
+                                    FOR i IN(
+                                    select p.seqproduto as CÓDIGO,p.descricao as descrição,
+                                    decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
+                                    EM.unidade||'('||EM.quantidade||')' as Unidade
+                                    from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
+                                    where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
+                                    and E.tipo in(1) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
+                                    and Em.embalagemindustriapadrao = 'S'
+                                    and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM
+                                    PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and
+                                    PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
+                                    order by Insumo
+                                    )
+                                    LOOP
+                                    if i.insumo = 'SUBSTITUTO' then
+                                    cHTML := cHTML||'
+                                    <tr class="text-danger">
+                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                        <td>
+                                            <p>'||TO_CHAR(i.descrição)||'</p>
+                                        </td>
+                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                    </tr>
+                                    ';
+                                    else
+                                    cHTML := cHTML||'
+                                    <tr>
+                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                        <td>
+                                            <p>'||TO_CHAR(i.descrição)||'</p>
+                                        </td>
+                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                    </tr>
+                                    ';
+                                    END IF;
+                                    END LOOP;
+
+                                    cHTML := cHTML||'
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
                 </div>
-            </div><!-- #################### --- FIM tabela  ENBALAGEM PRIMARIA -- ################################  -->
-            
-            <div class="row"> <!-- #################### --- INICIO tabela ENBALAGEM SECUNDARIA  -- ################################  -->
-                <div class="col-12">
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Insumos para cadastrar a tara da embalagem secundaria  
-                        </div>
-                        <div class="row">
-                            <div  class="mx-auto col-12">
-                                
-                                <table class="table align-middle table-bordered border">
-                                    <!-- <caption>List of users</caption> -->
-                                    <thead>
-                                      <tr class="text-center">
+            </div>
+        </div><!-- #################### --- FIM tabela  ENBALAGEM PRIMARIA -- ################################  -->
+
+        <div class="row">
+            <!-- #################### --- INICIO tabela ENBALAGEM SECUNDARIA  -- ################################  -->
+            <div class="col-12">
+
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Insumos para cadastrar a tara da embalagem secundaria
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border">
+                                <thead>
+                                    <tr class="text-center">
                                         <th width="50px">Código</th>
-                                        <th width="200px">Descrição</th>                                        
+                                        <th width="200px">Descrição</th>
                                         <th width="50">Insumo</th>
                                         <th width="50">Unidade</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody class="text-break">
+                                    </tr>
+                                </thead>
+                                <tbody class="text-break">
                                     ';
-                                      FOR i IN(
-                                              select p.seqproduto as CÓDIGO,p.descricao as descrição,
-                                              decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
-                                              EM.unidade||'('||EM.quantidade||')' as Unidade
-                                              from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
-                                              where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
-                                              and E.tipo in(2) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto and Em.embalagemindustriapadrao = 'S'
-                                              and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
-                                              order by Insumo
-                                              )
-                                      LOOP        
-                                              if i.insumo = 'SUBSTITUTO' then
-                                              cHTML := cHTML||' 
-                                              <tr class="text-danger" >
-                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                                <td><p>'||TO_CHAR(i.descrição)||'</p></td>
-                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>                                        
-                                              </tr>
-                                              ';
-                                              else
-                                              cHTML := cHTML||' 
-                                              <tr>
-                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                                <td><p>'||TO_CHAR(i.descrição)||'</p></td>
-                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>                                        
-                                              </tr>
-                                              ';
-                                              END IF;
-                                      END LOOP;
-                                      
-                                    cHTML := cHTML||' 
-                                    </tbody>
-                                  </table>
-                                
-                            </div>
+                                    FOR i IN(
+                                    select p.seqproduto as CÓDIGO,p.descricao as descrição,
+                                    decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
+                                    EM.unidade||'('||EM.quantidade||')' as Unidade
+                                    from dge_produto P,dge_embalagemkitinsumo E, dge_PRODUTOEMBALAGEM EM
+                                    where (E.Seqprodutodestino = nSeqProduto or E.seqprodutodestino is null)
+                                    and E.tipo in(2) and P.Seqproduto = E.Seqproduto and Em.Seqproduto = P.Seqproduto
+                                    and Em.embalagemindustriapadrao = 'S'
+                                    and E.seqembalagemkit = (select kt.seqembalagemkit from dge_PRODUTOEMBALAGEM
+                                    PO,dge_produtoembalagemkit KT where PO.Seqproduto = nSeqProduto and
+                                    PO.embalagemindustriapadrao = 'S' and KT.seqembalagem = vSeqUnidadePatrao)
+                                    order by Insumo
+                                    )
+                                    LOOP
+                                    if i.insumo = 'SUBSTITUTO' then
+                                    cHTML := cHTML||'
+                                    <tr class="text-danger">
+                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                        <td>
+                                            <p>'||TO_CHAR(i.descrição)||'</p>
+                                        </td>
+                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                    </tr>
+                                    ';
+                                    else
+                                    cHTML := cHTML||'
+                                    <tr>
+                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                        <td>
+                                            <p>'||TO_CHAR(i.descrição)||'</p>
+                                        </td>
+                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                    </tr>
+                                    ';
+                                    END IF;
+                                    END LOOP;
+
+                                    cHTML := cHTML||'
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
                 </div>
-            </div><!-- #################### --- FIM tabela  ENBALAGEM SECUNDARIA -- ################################  -->
-        
+            </div>
+        </div><!-- #################### --- FIM tabela  ENBALAGEM SECUNDARIA -- ################################  -->
+
         <!-- #################### --- FIM bloco 3 -- ################################  -->
         <!-- #################### --- INICIO bloco 4 IMA-- ################################  -->
-        
 
-            <!-- #################### --- FIM bloco 4 -- ################################  -->
-            
-            <!-- #################### --- FIM bloco 6 -- ################################  -->
-            </div>
-            <div class="A4">
-            <!-- #################### --- INICIO bloco 5 -- ################################  -->
-            <div class="row text-center  fs-4 caixa">
-                <div class="distaca fw-bold">Especificação do produto</div>
-                <p>'||vEspecificacaoProduto||'</p>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="distaca fw-bold ">Catacterística de qualidade</div>
-                        <p>'||vCaracteristicaQualidade||'</p>                        
-                    </div>
-                </div>
-                <div class="col-6 border-start">
-                    <div class="row">
-                        <div class="distaca fw-bold">Catacterística de processo</div>
-                        <p>'||vCaracteristicaProcesso||'</p>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="row text-center fw-bold fs-5 caixa">
-                <div class="distaca ">Foto corte do produto</div>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col">
-                            <img class="img-fluid foto" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vCorteFrente)|| '" alt="" />
-                        </div>
-                    </div>
-                </div>
-                <div class=" col-6 border-left">
-                    <div class="row">
-                        <div class="col">
-                            <img class="img-fluid foto" src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vCorteVerso)||'" alt="" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row caixa">
-                <div class=" distaca text-center fw-bold mb-2 fs-4"><p class="">Descrição de embalagens</p></div>
-                <div class=" col-8 text-center fw-bold"><p class="">Produto na embalagem primaria</p></div>
-                <div class=" col-4 fw-bold text-center"><p class="">primaria</p></div>                
 
-                
-                    <div class="col-8 ">
-                            
-                            <div class="row">
-                                <div class="col-6">
-                                    <img class="img-fluid foto" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbPriFrente)|| '" alt="" />
-                                </div>
-                                <div class="col-6">
-                                    <img class="img-fluid foto" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbPriVerso)|| '" alt="" />
-                                </div>
-                            </div>
-                        
+        <!-- #################### --- FIM bloco 4 -- ################################  -->
+
+        <!-- #################### --- FIM bloco 6 -- ################################  -->
+    </div>
+    <div class="A4">
+        <!-- #################### --- INICIO bloco 5 -- ################################  -->
+        <div class="row text-center  fs-4 caixa">
+            <div class="distaca fw-bold">Especificação do produto</div>
+            <p>'||vEspecificacaoProduto||'</p>
+            <div class="col-6">
+                <div class="row">
+                    <div class="distaca fw-bold ">Catacterística de qualidade</div>
+                    <p>'||vCaracteristicaQualidade||'</p>
+                </div>
+            </div>
+            <div class="col-6 border-start">
+                <div class="row">
+                    <div class="distaca fw-bold">Catacterística de processo</div>
+                    <p>'||vCaracteristicaProcesso||'</p>
+
+                </div>
+            </div>
+        </div>
+        <div class="row text-center fw-bold fs-5 caixa">
+            <div class="distaca ">Foto corte do produto</div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vCorteFrente)|| '" alt="" />
                     </div>
-        
-                    <div class="col-4 my-auto text-center">
-                        
-                                <p>'||vDesEmbalagemPrimaria||'</p>
-                            
+                </div>
+            </div>
+            <div class=" col-6 border-left">
+                <div class="row">
+                    <div class="col">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vCorteVerso)||'" alt="" />
                     </div>
-                <div class=" col-8 text-center fw-bold"><p class="">Produto embalagem secundaria</p></div>
-                <div class=" col-4 fw-bold text-center"><p class="">descrição</p></div> 
-                    <div class="col-8 ">
+                </div>
+            </div>
+        </div>
+        <div class="row caixa">
+            <div class=" distaca text-center fw-bold mb-2 fs-4">
+                <p class="">Descrição de embalagens</p>
+            </div>
+            <div class=" col-8 text-center fw-bold">
+                <p class="">Produto na embalagem primaria</p>
+            </div>
+            <div class=" col-4 fw-bold text-center">
+                <p class="">primaria</p>
+            </div>
+
+
+            <div class="col-8 ">
+
+                <div class="row">
+                    <div class="col-6">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbPriFrente)|| '"
+                            alt="" />
+                    </div>
+                    <div class="col-6">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbPriVerso)|| '"
+                            alt="" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-4 my-auto text-center">
+
+                <p>'||vDesEmbalagemPrimaria||'</p>
+
+            </div>
+            <div class=" col-8 text-center fw-bold">
+                <p class="">Produto embalagem secundaria</p>
+            </div>
+            <div class=" col-4 fw-bold text-center">
+                <p class="">descrição</p>
+            </div>
+            <div class="col-8 ">
+                <div class="row">
+                    <div class="col-6">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbSecFrente)|| '"
+                            alt="" />
+                    </div>
+                    <div class="col-6">
+                        <img class="img-fluid foto"
+                            src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbSecVerso)|| '"
+                            alt="" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 my-auto text-center">
+                <p>'||vDesEmbalagemSecundaria||'</p>
+            </div>
+
+        </div>
+        <!-- #################### --- FIM bloco 5 -- ################################  -->
+    </div>
+    <!-- #################### --- Inicio bloco 6 -- ################################  -->
+
+
+
+    <div class="A4">
+        <!-- #################### --- inicio bloco 7 -- ################################  -->
+
+
+        <!-- #################### --- FIM bloco 7 -- ################################  -->
+
+        <!-- #################### --- FIM bloco 8 -- ################################  -->
+        <div class="row">
+            <div class="col-12">
+
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Etiquetas
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-6">
+                            <img class="foto img-fluid  "
+                                src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vEtiquetaPrimaria)|| '" />
+                        </div>
                         <div class="row">
-                            <div class="col-6">
-                                <img class="img-fluid foto" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbSecFrente)|| '" alt="" />
+                            <div class="mx-auto col-7 caixat">
+                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
+                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
+                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
                             </div>
-                            <div class="col-6">
-                                <img class="img-fluid foto" src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vProEmbSecVerso)|| '" alt="" />
-                            </div>
-                        </div>                    
+                        </div>
                     </div>
-    
-                <div class="col-4 my-auto text-center">                    
-                   <p>'||vDesEmbalagemSecundaria||'</p>
                 </div>
-                
             </div>
-            <!-- #################### --- FIM bloco 5 -- ################################  -->
-            </div>
-            <!-- #################### --- Inicio bloco 6 -- ################################  -->
-            
-          
-
-            <div class="A4">
-            <!-- #################### --- inicio bloco 7 -- ################################  -->
-            
-           
-            <!-- #################### --- FIM bloco 7 -- ################################  -->
-
-            <!-- #################### --- FIM bloco 8 -- ################################  -->
-            <div class="row">
-                <div class="col-12">
-                    
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Etiquetas
-                        </div>
-                        <div class="row">
-                            <div  class="mx-auto col-6">
-                                <img class="foto img-fluid  " src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vEtiquetaPrimaria)|| '"/>                                
-                            </div>
-                            <div class="row">
-                                <div  class="mx-auto col-7 caixat">
-                                    <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>                               
-                                    <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>                               
-                                    <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>                               
-                                </div>
-                            </div>           
-                        </div>
+        </div>
+        <!-- #################### --- FIM bloco 8 -- ################################  -->
+        <!-- #################### --- inicio bloco 9 -- ################################  -->
+        <div class="row">
+            <div class="col-12">
+                <div class="caixa">
+                    <div class="distaca fs-5 fw-bold text-center">
+                        Modelo da etiqueta testeira: imagem meramente ilustrativa
                     </div>
-                </div>                               
-            </div>
-            <!-- #################### --- FIM bloco 8 -- ################################  -->
-            <!-- #################### --- inicio bloco 9 -- ################################  -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="caixa">
-                        <div class="distaca fs-5 fw-bold text-center">
-                            Modelo da etiqueta testeira: imagem meramente ilustrativa
+                    <div class="row">
+                        <div class="col-11 mx-auto ">
+                            <img class="  foto img-fluid mx-auto  "
+                                src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vEtiquetaSecundaria)|| '" />
                         </div>
-                        <div class="row">
-                            <div class="col-11 mx-auto ">
-                                <img class="  foto img-fluid mx-auto  " src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vEtiquetaSecundaria)|| '"/>                                
-                            </div>                            
-                                                                  
-                        </div>
+
                     </div>
-                </div>               
-            </div>
-            <div class="row ">
-                
-                <div class="col caixat">
-                    <p>
-                        Texto Texto Texto
-                        Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                        Texto Texto TextoTexto Texto Texto Texto Texto.  
-                    </p>
-                    <p>
-                        Texto Texto Texto
-                        Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                        Texto Texto TextoTexto Texto Texto Texto Texto.  
-                    </p>
-                    <p>
-                        Texto Texto Texto
-                        Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                        Texto Texto TextoTexto Texto Texto Texto Texto.  
-                    </p>
                 </div>
-            
             </div>
-            <!-- #################### --- FIM bloco 9 -- ################################  -->
+        </div>
+        <div class="row ">
+
+            <div class="col caixat">
+                <p>
+                    Texto Texto Texto
+                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
+                    Texto Texto TextoTexto Texto Texto Texto Texto.
+                </p>
+                <p>
+                    Texto Texto Texto
+                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
+                    Texto Texto TextoTexto Texto Texto Texto Texto.
+                </p>
+                <p>
+                    Texto Texto Texto
+                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
+                    Texto Texto TextoTexto Texto Texto Texto Texto.
+                </p>
             </div>
-            <div class="A4">
-            <!-- #################### --- FIM bloco 10 -- ################################  -->
-            <div class="row">
-                <div class="col-12">
-                    
-                    <div class=" ">
 
-                        <div class="row fs-5 fw-bold  ">                           
+        </div>
+        <!-- #################### --- FIM bloco 9 -- ################################  -->
+    </div>
+    <div class="A4">
+        <!-- #################### --- FIM bloco 10 -- ################################  -->
+        <div class="row">
+            <div class="col-12">
 
-                                <div class=" col-3  rounded-top text-center distaca">
-                                    Uso exclusivo de bataguassu
-                                </div>
+                <div class=" ">
 
-                                <div class=" col-5 fs-5 fw-bold ms-auto rounded-top distaca">
-                                    COLAR A ETIQUETA COM O "SHIPPNG MARK" INFORMADO PELO CLIENTE
-                                </div>                           
+                    <div class="row fs-5 fw-bold  ">
+
+                        <div class=" col-3  rounded-top text-center distaca">
+                            Uso exclusivo de bataguassu
                         </div>
 
-                        <div class="row ">
-                            <div class="col-12 border border-5 ">
-                                <!-- <img class="mx-auto  foto img-fluid  " src="1.jpg"/> -->
-                                <div class="col caixa-etiqueta">
-                                    
-                                </div>
-                            </div>                            
-                                                                  
+                        <div class=" col-5 fs-5 fw-bold ms-auto rounded-top distaca">
+                            COLAR A ETIQUETA COM O "SHIPPNG MARK" INFORMADO PELO CLIENTE
                         </div>
+                    </div>
 
-                        <div class="row fs-5 fw-bold  ">                           
+                    <div class="row ">
+                        <div class="col-12 border border-5 ">
+                            <!-- <img class="mx-auto  foto img-fluid  " src="1.jpg"/> -->
+                            <div class="col caixa-etiqueta">
 
-                            <div class=" col-5  rounded-bottom  text-center distaca">
-                                <p>Espaço Reservado para USDA.</p>
-                                <p>As Etiquetas não podem sobrepor este espaço.</p>
                             </div>
-                                                      
                         </div>
 
                     </div>
-                    
-                </div>               
-            </div>    
-            <br/>        
-            <!-- #################### --- FIM bloco 10 -- ################################  -->
-            
-           
-            
 
-        </div><!--fim A4 -->
+                    <div class="row fs-5 fw-bold  ">
+
+                        <div class=" col-5  rounded-bottom  text-center distaca">
+                            <p>Espaço Reservado para USDA.</p>
+                            <p>As Etiquetas não podem sobrepor este espaço.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <!-- #################### --- FIM bloco 10 -- ################################  -->
 
 
-        
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
-            crossorigin="anonymous"></script>
+
+    </div>
+    <!--fim A4 -->
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>';
