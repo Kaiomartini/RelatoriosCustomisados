@@ -96,17 +96,10 @@ select P.SEQPRODUTO,
 -- select para buscar paremetros nas tabelas
 SELECT * FROM DBA_ALL_TABLES WHERE TABLE_NAME IN (
 SELECT TABLE_NAME FROM DBA_TAB_COLUMNS WHERE OWNER = 'TSTDATAVALE' AND COLUMN_NAME = 'SEQGRUPOCOMPRA')
--- consulta informações nuricionais 
-select p.ordem, p.descricao,p.referencia as quantidade, p.vlrpercdiario as diario  from Dge_Produtocomposicao p where p.seqproduto = 1002 order by p.ordem 
+--consulta informações nuricionais 
+select p.ordem, p.descricao,p.referencia as quantidade, p.vlrpercdiario as diario  
+from Dge_Produtocomposicao p where p.seqproduto = 1002 order by p.ordem 
 
-
-
-
-
-  cHTML CLob := Null;
-  vEmpresa ge_empresa.nroempresa%TYPE;
-  sRazaoSocial GE_Empresa.RazaoSocial%Type;
-  vLogo BLOB := NULL; 
 -- Variaveis cidade inicio
   
   vRazaosocial GE_Empresa.RAZAOSOCIAL%Type := null;
@@ -155,4 +148,30 @@ select p.ordem, p.descricao,p.referencia as quantidade, p.vlrpercdiario as diari
  Where Me.SeqModeloEtiqueta = Pm.SeqModeloEtiqueta and Pm.SeqProduto = 1002
 
 
- --- SELECT MERCADO DESTICO
+--- SELECT MERCADO DESTICO
+SELECT 
+    E.RAZAOSOCIAL,
+    E.FANTASIA,
+    regexp_replace(LPAD(To_char(e.cnpjentidade), 14),'([0-9]{2})([0-9]{3})([0-9]{3})([0-9]{4})','\1.\2.\3/\4-') as CNPJ,
+    E.TELEVENDASDDD ,
+    E.TELEVENDASNRO ,
+    e.endereco ,
+    e.endereconro,
+    Replace(Trim(To_char(e.CEP/1000,'00000.000')), '.', '-')as cep,
+    e.cidade,
+    e.inscrestadual as ie
+into 
+    vRazaosocial,  
+    vNomeFantasia,    
+    vCNPJ,         
+    vDDD,
+    vTelefone,      
+    vLogradouro,
+    vNumero ,        
+    vCep, 
+    vCidade,
+    vIE
+    vlogo            
+FROM 
+    GE_EMPRESA E  
+where e.nroempresa = vEmpresa; 
