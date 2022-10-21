@@ -45,10 +45,10 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    vCodClassFiscal      varchar2(500);
   
 -- DESCRIÇÃO DO PRODUTO
-  vIdiomaTipoInd    varchar2(500);
-  vDesTipoInd       varchar2(500);
-  vIdiomaInd        varchar2(500);
-  vDesInd           varchar2(500);
+  vIdiomaTipoInd        varchar2(500);
+  vDesTipoInd           varchar2(500);
+  vIdiomaInd            varchar2(500);
+  vDesInd               varchar2(500);
   
 -- Especificação e caracteristicas do corte 
   vEspecificacaoProduto     varchar2(500);
@@ -112,21 +112,21 @@ fOR I IN
       
    --SELECT IMAGENS DO PRODUTO 
 FOR I IN
-         (SELECT 
-               pa.seqproduto,               
-               pa.seqprodutoanexo,
-               AA.CODLINK,
-               pa.codigo as ordem,
-               pa.titulo,
-               aa.descricao as descImg,
-               aa.conteudo as img
-                   FROM dge_arquivoanexo aa, DGE_ProdutoAnexo pa
-               WHERE aa.CodLink = pa.SeqProdutoAnexo
-                    AND aa.TabLink = 'DGE_PRODUTOANEXO'
-                    AND pa.SeqProduto = nSeqProduto                    
-               ORDER BY pa.codigo)
+    (SELECT 
+       pa.seqproduto,               
+       pa.seqprodutoanexo,
+       AA.CODLINK,
+       pa.codigo as ordem,
+       pa.titulo,
+       aa.descricao as descImg,
+       aa.conteudo as img
+    FROM dge_arquivoanexo aa, DGE_ProdutoAnexo pa
+    WHERE aa.CodLink = pa.SeqProdutoAnexo
+       AND aa.TabLink = 'DGE_PRODUTOANEXO'
+       AND pa.SeqProduto = nSeqProduto                    
+    ORDER BY pa.codigo)
                
-     LOOP
+    LOOP
          if i.ordem = 1 and i.descimg  = 'FRENTE' then
                vCorteFrente := i.img;
          elsif i.ordem = 1 and i.descimg  = 'VERSO' then
@@ -143,7 +143,7 @@ FOR I IN
                vProEmbSecVerso := i.img;         
          END if;  
            
-     END LOOP;
+    END LOOP;
     
    --SELECT FICHA TECNICA
 SELECT
@@ -328,7 +328,7 @@ cHTML := cHTML ||'
         }
         .distaca {
             background-color: #ddd;
-            font-weight: bold;
+            
 
         }
         .foto {
@@ -363,9 +363,9 @@ cHTML := cHTML ||'
 
 <body class="text-uppercase">
 
-    <div class="A4">
-        <section id="cabesacho">
-            <div class="row b1">
+    <div id="Page1" class="A4">
+        
+            <div class="row b1"><!-- Row  cabesalho-->
                 <div class="col-2">
                     <img class="logo img-fluid"
                         src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />
@@ -373,8 +373,7 @@ cHTML := cHTML ||'
                 <div class="col-6 quebra">
                     <div class="row text-center ">
                         <p class="fs-5 fw-bold">'||TO_CHAR(vNomeFantasia)||'</p>
-                        <p class="fs-6">'||'Local: '||TO_CHAR(vCidade)||' - '||TO_CHAR(vLogradouro)||' -
-                            '||TO_CHAR(vNumero)||'</p>
+                        <p class="fs-6">'||'Local: '||TO_CHAR(vCidade)||' - '||TO_CHAR(vLogradouro)||' - '||TO_CHAR(vNumero)||'</p>
                         <p class="fs-6">'||'CNPJ: '||TO_CHAR(vCNPJ)||'IE:'||TO_CHAR(vIE)||'</p>
                         <p class="fs-6 d-inline"> Telefone:('||TO_CHAR(vDDD)||')'||TO_CHAR(vTelefone)||'</p>
                         <p class="fs-6 d-inline">'||'CEP: '||TO_CHAR(vCep)||'</p>
@@ -391,36 +390,39 @@ cHTML := cHTML ||'
                             <div>'||vDataAtual||'</div>
                             <div>'||vDataAtual||'</div>
                             <div>01</div>
-
                         </div>
                     </div>
                 </div>
-                <div class="row ">
-                    <div class="col fs-3 text-center border-top fw-bold">
+
+                <div class="row "> <!-- TITULO FORMULARIO -->
+                    <div class="col fs-5 text-center border-top fw-bold">
                         <p>Ficha tecnica do produto</p>
                     </div>
-                </div>
+                </div><!-- fim row-->
 
-            </div>
-        </section>
+            </div><!-- fim cabesalho-->
+        
 
         <!-- #################### --- FIM bloco 1 -- ################################  -->
 
         <!-- #################### --- INICIO bloco 2 -- ################################  -->
-        <div class="row text-center fw-bold distaca">
-            <div class="col-2 my-auto">Tipo produto</div>
-            <div class="col-8 text-center my-auto fs-4 border-end border-start border-secondary">
+        <div class="row text-center fw-bold distaca"> <!--  DESCRISAO PRODUTO -->
+            <div class="col-md-auto my-auto">
+                Produto
+            </div>
+            <div class="col text-center my-auto fs-2 border-end border-start border-secondary">
                 '||To_char(nSeqProduto)||'-'||vPdescricao||'
             </div>
-            <div class="col-2 my-auto">
-                <div class="row my-3 ">
-                    <div class="col-12">'||vConservacao||'</div>
-                    <div class="col-6">min'||vTempMaxima||'</div>
-                    <div class="col-6">max'||vTempMinima||'</div>
+            <div class="col-3 my-auto">
+                <div class="row my-0 ">
+                    <div class="fs-1" style="color:#084298">'||vConservacao||'</div>
+                    <div class=""> Temperatura Mácima: '||vTempMaxima||'</div>
+                    <div class=""> Temperatura Mínima: '||vTempMinima||'</div>
                 </div>
             </div>
         </div>
-        <div class="row">
+
+        <div class="row"> <!-- row descrições do produto -->
             <div class="col-12">
                 <div class="row border-dark mt-1">
                     <div class="col-2  fw-bold ">
@@ -467,7 +469,7 @@ cHTML := cHTML ||'
                     </div>
                 </div>
             </div>
-        </div>
+        </div> <!-- fim row descrições do produto -->
 
         <!-- #################### --- FIM bloco 2 -- ################################  -->
         <!-- #################### --- INICIO bloco TABELA INFORMAÇÃO -- ################################  -->
@@ -475,7 +477,6 @@ cHTML := cHTML ||'
         <div class="row">
             <!-- #################### --- FIM tabela  Informações nutricional  -- ################################  -->
             <div class="col oculta">
-
                 <div class="caixa">
                     <div class="distaca fs-5 fw-bold text-center">
                         Informações nutricionais
@@ -485,15 +486,9 @@ cHTML := cHTML ||'
                     </div>
                     <div class="row">
                         <div class="mx-auto col-12">
-
                             <table class="table align-middle table-bordered border table-striped">
-
-                                <thead>
-                                    <!--<tr>
-                                        <th class="test-center" colspan="4" width="50px">Porção de 100g-(1 bife medio)</th>                                                                             
-                                      </tr>-->
-                                    <tr>
-                                        <!--<th width="50px">ID</th>-->
+                                <thead>                                    
+                                    <tr>                                        
                                         <th width="200px">descrisao</th>
                                         <th width="50">quantidade</th>
                                         <th width="50">Valor Diaria</th>
@@ -525,14 +520,12 @@ cHTML := cHTML ||'
                                     ';
                                     END LOOP;
                                     cHTML := cHTML||'
-
-
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </div> <!--fim Row --->
+                </div> 
+            </div> <!-- fim informação nutricional --->
             <!-- #################### --- FIM TABELA -- ################################  -->
             <!-- #################### --- INICIO TABELA INFORMASAO GERAL -- ################################  -->
 
@@ -616,53 +609,54 @@ cHTML := cHTML ||'
                 </div>
             </div>
             <!-- #################### --- FIM TABELA INFORMASAO GERAL -- ################################  -->
-        </div>
+        </div> <!--fim Row informações gerais --->
 
 
         <!-- #################### --- INICIO bloco 3 -- ################################  -->
         <!-- #################### --- INICIO bloco 3 -- ################################  -->
 
+        
+        <div class="row mx-0">
+            <div class="col distaca text-center fw-bold border border-white fs-5">Embalagem CX(1)</div>
+        </div><!--fim row-->
+             
+        <div class="row row-cols-5 mb-0 mx-0"> <!--informações gerais padrao 2 com distaca -->
+              
+           <div class="col distaca text-center  px-1 border border-white">
+               <div class="fw-bold ">cod gtin </div>
+               <div class="bg-white mb-1 ">
+                   '||vGtinUnidadePadrao||'
+               </div>
+           </div>            
+           <div class="col distaca text-center  px-1 border  border-white">
+               <div class="fw-bold ">Peso Mínimo</div>
+               <div class="bg-white mb-1 ">
+                   '||vPesoMinimo||'
+               </div>
+           </div>
+           <div class="col distaca text-center  px-1 border border-white">
+               <div class="fw-bold ">Peso Máximo</div>
+               <div class="bg-white mb-1 ">
+                   '||vPesoMaximo||'
+               </div>
+           </div>
+           <div class="col distaca text-center  px-1 border border-white">
+               <div class="fw-bold ">Peso Medio</div>
+               <div class="bg-white mb-1 ">
+                   '||vPesoMedio||'
+               </div>
+           </div>
+           <div class="col distaca text-center  px-1  border border-white">
+               <div class="fw-bold ">Peso padrão</div>
+               <div class="bg-white mb-1 fw-bold ">
+                   '||vPesoPadrao||'
+               </div>
+           </div> 
+           
+        </div><!--fim row-->
 
-
-        <div id="embalagem" class="row">
-
-        <div class="row">
-                <div class="col distaca text-center fw-bold border border-white fs-5">Embalagem CX(1)</div>
-            </div>
-            <div class="row row-cols-5 mb-2"> <!--informações gerais padrao 2 com distaca -->
-                <div class="col distaca text-center  px-1 border border-white">
-                <div class="fw-bold ">cod gtin </div>
-                <div class="bg-white mb-1 ">
-                    '||vGtinUnidadePadrao||'
-                </div>
-            </div>            
-            <div class="col distaca text-center  px-1 border  border-white">
-                <div class="fw-bold ">Peso Mínimo</div>
-                <div class="bg-white mb-1 ">
-                    '||vPesoMinimo||'
-                </div>
-            </div>
-            <div class="col distaca text-center  px-1 border border-white">
-                <div class="fw-bold ">Peso Máximo</div>
-                <div class="bg-white mb-1 ">
-                    '||vPesoMaximo||'
-                </div>
-            </div>
-            <div class="col distaca text-center  px-1 border border-white">
-                <div class="fw-bold ">Peso Medio</div>
-                <div class="bg-white mb-1 ">
-                    '||vPesoMedio||'
-                </div>
-            </div>
-            <div class="col distaca text-center  px-1  border border-white">
-                <div class="fw-bold ">Peso padrão</div>
-                <div class="bg-white mb-1 fw-bold ">
-                    '||vPesoPadrao||'
-                </div>
-            </div> 
-            <!-- #################### --- FIM tabela ENBALAGEM PRIMARIA -- ################################  -->
+        <div id="embalagem" class="row">  <!-- #################### --- FIM tabela ENBALAGEM PRIMARIA -- ################################  -->
             <div class="col-12">
-
                 <div class="caixa">
                     <div class="distaca fs-5 fw-bold text-center">
                         Insumos para cadastrar a tara da embalagem primária
@@ -737,14 +731,12 @@ cHTML := cHTML ||'
                 </div>
             </div>
         </div><!-- #################### --- FIM tabela  ENBALAGEM PRIMARIA -- ################################  -->
-
-        <div class="row">
-            <!-- #################### --- INICIO tabela ENBALAGEM SECUNDARIA  -- ################################  -->
+       
+        <div id="embalagem" class="row">  <!-- #################### --- FIM tabela ENBALAGEM SECUNDARIA-- ################################  -->
             <div class="col-12">
-
                 <div class="caixa">
                     <div class="distaca fs-5 fw-bold text-center">
-                        Insumos para cadastrar a tara da embalagem secundaria
+                        Insumos para cadastrar a tara da embalagem primária
                     </div>
                     <div class="row">
                         <div class="mx-auto col-12">
@@ -761,7 +753,7 @@ cHTML := cHTML ||'
                                 <tbody class="text-break">
                                     ';
                                     FOR i IN
-                                         (select 
+                                          (select 
                                               p.seqproduto as CÓDIGO,p.descricao as descrição,
                                               decode(e.seqembalagemkititemsubst, null,'PRINCIPAL','SUBSTITUTO') as Insumo,
                                               EM.unidade||'('||EM.quantidade||')' as Unidade
@@ -780,30 +772,31 @@ cHTML := cHTML ||'
                                                                          and PO.embalagemindustriapadrao = 'S' 
                                                                          and KT.seqembalagem = vSeqUnidadePatrao)
                                           order by Insumo)
+                                    
                                     LOOP
-                                    if i.insumo = 'SUBSTITUTO' then
-                                    cHTML := cHTML||'
-                                    <tr class="text-danger">
-                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                        <td>
-                                            <p>'||TO_CHAR(i.descrição)||'</p>
-                                        </td>
-                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
-                                    </tr>
-                                    ';
-                                    else
-                                    cHTML := cHTML||'
-                                    <tr>
-                                        <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
-                                        <td>
-                                            <p>'||TO_CHAR(i.descrição)||'</p>
-                                        </td>
-                                        <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
-                                        <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
-                                    </tr>
-                                    ';
-                                    END IF;
+                                        if i.insumo = 'SUBSTITUTO' then
+                                            cHTML := cHTML||'
+                                            <tr class="text-danger">
+                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                                <td>
+                                                    <p>'||TO_CHAR(i.descrição)||'</p>
+                                                </td>
+                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                            </tr>
+                                            ';
+                                        else
+                                            cHTML := cHTML||'
+                                            <tr>
+                                                <th scope="row" class="text-end">'||TO_CHAR(i.código)||'</th>
+                                                <td>
+                                                    <p>'||TO_CHAR(i.descrição)||'</p>
+                                                </td>
+                                                <td class="text-center">'||TO_CHAR(i.insumo)||'</td>
+                                                <td class="text-center">'||TO_CHAR(i.unidade)||'</td>
+                                            </tr>
+                                            ';
+                                        END IF;
                                     END LOOP;
 
                                     cHTML := cHTML||'
@@ -814,19 +807,13 @@ cHTML := cHTML ||'
                     </div>
                 </div>
             </div>
-        </div><!-- #################### --- FIM tabela  ENBALAGEM SECUNDARIA -- ################################  -->
-
-        <!-- #################### --- FIM bloco 3 -- ################################  -->
-        <!-- #################### --- INICIO bloco 4 IMA-- ################################  -->
+        </div><!-- #################### --- FIM tabela  ENBALAGEM SEGUNDARIA -- ################################  -->
 
 
-        <!-- #################### --- FIM bloco 4 -- ################################  -->
-
-        <!-- #################### --- FIM bloco 6 -- ################################  -->
-    </div>
-    <div class="A4">
+    </div><!--fim A4 Page1-->
+    <div id="Page2" class="A4">
         <!-- #################### --- INICIO bloco 5 -- ################################  -->
-        <div class="row text-center  fs-4 caixa">
+        <div class="row text-center  fs-4 caixa mx-0 mb-2">
             <div class="distaca fw-bold">Especificação do produto</div>
             <p>'||vEspecificacaoProduto||'</p>
             <div class="col-6">
@@ -843,7 +830,7 @@ cHTML := cHTML ||'
                 </div>
             </div>
         </div>
-        <div class="row text-center fw-bold fs-5 caixa">
+        <div class="row text-center fw-bold fs-5 caixa mx-0 mb-2">
             <div class="distaca ">Foto corte do produto</div>
             <div class="col-6">
                 <div class="row">
@@ -862,7 +849,7 @@ cHTML := cHTML ||'
                 </div>
             </div>
         </div>
-        <div class="row caixa">
+        <div class="row caixa mx-0 mb-2">
             <div class=" distaca text-center fw-bold mb-2 fs-4">
                 <p class="">Descrição de embalagens</p>
             </div>
@@ -923,19 +910,10 @@ cHTML := cHTML ||'
 
         </div>
         <!-- #################### --- FIM bloco 5 -- ################################  -->
-    </div>
-    <!-- #################### --- Inicio bloco 6 -- ################################  -->
-
-
-
-    <div class="A4">
-        <!-- #################### --- inicio bloco 7 -- ################################  -->
-
-
-        <!-- #################### --- FIM bloco 7 -- ################################  -->
-
-        <!-- #################### --- FIM bloco 8 -- ################################  -->
-        <div class="row">
+    </div><!--fim A4 Page2-->
+    <div id="Page3"class="A4">
+        
+        <div class="row mb-1">
             <div class="col-12">
 
                 <div class="caixa">
@@ -958,9 +936,7 @@ cHTML := cHTML ||'
                 </div>
             </div>
         </div>
-        <!-- #################### --- FIM bloco 8 -- ################################  -->
-        <!-- #################### --- inicio bloco 9 -- ################################  -->
-        <div class="row">
+        <div class="row mb-1">
             <div class="col-12">
                 <div class="caixa">
                     <div class="distaca fs-5 fw-bold text-center">
@@ -976,7 +952,7 @@ cHTML := cHTML ||'
                 </div>
             </div>
         </div>
-        <div class="row ">
+        <div class="row mb-1">
 
             <div class="col caixat">
                 <p>
@@ -998,8 +974,8 @@ cHTML := cHTML ||'
 
         </div>
         <!-- #################### --- FIM bloco 9 -- ################################  -->
-    </div>
-    <div class="A4">
+    </div><!--fim A4 Page3-->
+    <div id="Page4"class="A4">
         <!-- #################### --- FIM bloco 10 -- ################################  -->
         <div class="row">
             <div class="col-12">
@@ -1046,15 +1022,12 @@ cHTML := cHTML ||'
 
 
 
-    </div>
-    <!--fim A4 -->
+    </div><!--fim A4 Page4-->
 
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 </body>
 
 </html>';
