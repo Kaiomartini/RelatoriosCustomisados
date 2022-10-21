@@ -620,8 +620,46 @@ cHTML := cHTML ||'
 
 
         <!-- #################### --- INICIO bloco 3 -- ################################  -->
+        <!-- #################### --- INICIO bloco 3 -- ################################  -->
+
+
+
+        <div id="embalagem" class="row">
 
         <div class="row">
+                <div class="col distaca text-center fw-bold border border-white fs-5">Embalagem CX(1)</div>
+            </div>
+            <div class="row row-cols-5 mb-2"> <!--informações gerais padrao 2 com distaca -->
+                <div class="col distaca text-center  px-1 border border-white">
+                <div class="fw-bold ">cod gtin </div>
+                <div class="bg-white mb-1 ">
+                    '||vGtinUnidadePadrao||'
+                </div>
+            </div>            
+            <div class="col distaca text-center  px-1 border  border-white">
+                <div class="fw-bold ">Peso Mínimo</div>
+                <div class="bg-white mb-1 ">
+                    '||vPesoMinimo||'
+                </div>
+            </div>
+            <div class="col distaca text-center  px-1 border border-white">
+                <div class="fw-bold ">Peso Máximo</div>
+                <div class="bg-white mb-1 ">
+                    '||vPesoMaximo||'
+                </div>
+            </div>
+            <div class="col distaca text-center  px-1 border border-white">
+                <div class="fw-bold ">Peso Medio</div>
+                <div class="bg-white mb-1 ">
+                    '||vPesoMedio||'
+                </div>
+            </div>
+            <div class="col distaca text-center  px-1  border border-white">
+                <div class="fw-bold ">Peso padrão</div>
+                <div class="bg-white mb-1 fw-bold ">
+                    '||vPesoPadrao||'
+                </div>
+            </div> 
             <!-- #################### --- FIM tabela ENBALAGEM PRIMARIA -- ################################  -->
             <div class="col-12">
 
