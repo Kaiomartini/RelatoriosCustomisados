@@ -270,8 +270,7 @@ cHTML := cHTML||'
                     FROM Dual
                 )                 
       
-      LOOP
-         
+      LOOP         
          cHTML := cHTML||'<tr>';
          cHTML := cHTML||'<td align="left">'|| TO_Char(i.Sif) ||'</td>';
          cHTML := cHTML||'</tr>';       
