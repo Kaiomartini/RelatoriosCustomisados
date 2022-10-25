@@ -6,7 +6,9 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
     sRazaoSocial        GE_Empresa.RazaoSocial%Type;
     vLogo               BLOB := NULL;
     vDataAtual          varchar2(10) := TO_CHAR(SYSDATE, 'DD/MM/YYYY'); 
+    
 -- Variaveis cidade inicio
+
     vRazaosocial        GE_Empresa.RAZAOSOCIAL%Type := null;
     vNomeFantasia       GE_Empresa.FANTASIA%Type := null;
     vCNPJ1              GE_Empresa.CNPJENTIDADE%Type := null;
@@ -20,6 +22,7 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
     vIE                 GE_Empresa.inscrestadual%Type := null;
 
 -- FICHA TECNICA do produto
+
    vCodSif              varchar2(500);
    vGtinUnidadePadrao   varchar2(500);
    vGtinMenorControle   varchar2(500);
@@ -43,6 +46,8 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    vDescCest            varchar2(500);
    vMaturado            varchar2(500);
    vCodClassFiscal      varchar2(500);
+   vTipoCalculoValidade varchar2(50);
+   vFormulaProduto      varchar2(2000);
   
 -- DESCRIÇÃO DO PRODUTO
   vIdiomaTipoInd        varchar2(500);
@@ -71,28 +76,24 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    
 -- ESTILO DA CONDIÇÃO 
    vStyle                   CLOB:= NULL;
+   
+-- DESCRISAO DE PORSÃO MEDIA PA TABELA NUTRICIONAL
+   vDescPorcaoMedia         varchar2(200);
 
 BEGIN
-   --condição para mostrar INFORMAÇÃO NUTRICIONAL  
-for i in (
-        select 
-              count(p.ordem) as coluna 
-        from  Dge_Produtocomposicao p
-        where p.seqproduto = 2222222 
-              and p.ordem > 1  
-        order by p.ordem
-        )
-      loop
-        if i.coluna = 0 then
-           vStyle:= '
-             <style>
-                    .oculta{display:none;}
-                    @media print{.oculta{display:none;}}
-             </style>
-           ';
-        end if; 
-      end loop;
-     
+  --SELECT PORSAO MEDIA I 
+FOR I IN (
+    select 
+         p.descricao
+    from 
+         Dge_Produtocomposicao p
+    where 
+         p.seqproduto = nSeqProduto 
+    and p.ordem = 1 )
+LOOP
+vDescPorcaoMedia := i.descricao;
+END LOOP;
+
    --SELECT IMAGEM DAS ETIQUETAS
 fOR I IN
           (Select
@@ -146,6 +147,7 @@ FOR I IN
     END LOOP;
     
    --SELECT FICHA TECNICA
+BEGIN
 SELECT
      (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF,
      lpad(pe.gtin,14,0) as gtinUnidadePadrao,
@@ -164,7 +166,8 @@ SELECT
      Replace(Trim(To_char(c.CODNCM, '0999,90,00')), '.', ',')as NCM, C.DESCRICAO as desNCM,
      Replace(Trim(To_char(c.cest, '099,990,00')), '.', ',') as CEST, C.DESCRICAOCEST,
      DECODE(p.maturado,'S','SIM','N','NÃO') AS MATURADO, 
-     C.CODCLASSFISCAL
+     C.CODCLASSFISCAL,
+     NVL(FORMULA,0)
  into
     vCodSif,
     vGtinUnidadePadrao, vGtinMenorControle,
@@ -181,7 +184,8 @@ SELECT
     vCodNcm, vDescNcm,
     vCodCest, vDescCest,
     vMaturado,
-    vCodClassFiscal
+    vCodClassFiscal,
+    vFormulaProduto
  FROM 
     DGE_PRODUTO P,
     Dge_Produtoplanta  pp,
@@ -192,7 +196,9 @@ SELECT
     AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL 
     AND  P.SEQPRODUTO = PP.Seqproduto 
     AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'                        
-    AND P.SEQPRODUTO = nSeqProduto;                      
+    AND P.SEQPRODUTO = nSeqProduto;
+END;
+                          
    -- DESCRIÇÃO DO PRODUTO                                            
 for I in       
         (SELECT 
@@ -227,7 +233,8 @@ for I in
       end if;
       
   end loop;                  
-   --SELECT EMPRESA                 
+   --SELECT EMPRESA
+BEGIN                
 SELECT 
       E.RAZAOSOCIAL,
       E.FANTASIA,
@@ -256,6 +263,58 @@ SELECT
       GE_EMPRESA E  
   where 
       e.nroempresa = vEmpresa;
+END;
+   --SELECT PADRAO DE VALIDADE 
+BEGIN
+select 
+   DECODE(PP.TIPOVALIDADE,1,'ABATE',2,'DESOSSA') as calculoValiade 
+   into 
+   vTipoCalculoValidade
+from DGE_PRODUTOPLANTA  PP 
+WHERE PP.SEQPRODUTO = nSeqProduto;
+END;   
+--=========== CONDIÇÕES DE OCULTAMENTO DE INFORMAÇÃO =============== 
+
+  --CONDIÇÃO INFORMAÇÃO NUTRICIONAL
+for i in (
+        select 
+              count(p.ordem) as coluna 
+        from  Dge_Produtocomposicao p
+        where p.seqproduto = nSeqProduto 
+              and p.ordem > 1  
+        order by p.ordem
+        )
+      loop
+        if i.coluna = 0 then
+           vStyle:= '
+             <style>
+                    .oculta{display:none;}
+                    @media print{.oculta{display:none;}}
+             </style>
+           ';
+        end if; 
+      end loop;
+
+-- CONDIÇÃO FORMULA DO PRODUTO
+for i in(select 
+            count(formula) AS x 
+         from 
+            dge_produto 
+         where 
+            seqproduto = nSeqProduto)
+  loop
+    if i.x = 0 then
+     vStyle:= vStyle||'
+               <style>
+                      .oculta-formula{display:none;}
+                      @media print{.oculta-formula{display:none;}}
+               </style>
+     ';
+    end if; 
+    
+  end loop;     
+ 
+ 
  --============ INICIO HTML ====================
 cHTML := cHTML ||'
 <!-- 
@@ -312,15 +371,6 @@ cHTML := cHTML ||'
 
         }
 
-        /*@midia print .A4 {
-            \* box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*\ 
-            margin: 3mm auto;
-            width: 210mm;
-            padding: 5mm 5mm;
-            background-color: #fff;
-            height: 300mm;
-        }*/
-        /* body{background-color: #dadada;} */
         .pquebra {
             overflow-wrap: break-word;
             word-wrap: break-word;
@@ -357,6 +407,11 @@ cHTML := cHTML ||'
         }
         .table>:not(caption)>*>* {padding: .0 0.5rem;}
         .table {  margin: 0px;}
+        .text-alert{color:#ff2c2c}
+        
+        /*.zebra>div:nth-child(even) {
+        background: rgba(0, 0, 0, 0.05);;
+              }*/
     </style>
     '||vStyle||'
 </head>
@@ -406,11 +461,11 @@ cHTML := cHTML ||'
         <!-- #################### --- FIM bloco 1 -- ################################  -->
 
         <!-- #################### --- INICIO bloco 2 -- ################################  -->
-        <div class="row text-center fw-bold distaca"> <!--  DESCRISAO PRODUTO -->
-            <div class="col-md-auto my-auto">
+        <div class="row text-center fw-bold border border-2"> <!--  DESCRISAO PRODUTO -->
+            <div class="col-1 my-auto text-alert">
                 Produto
             </div>
-            <div class="col text-center my-auto fs-2 border-end border-start border-secondary">
+            <div class="col text-center my-auto fs-2 border-end border-start text-alert" >
                 '||To_char(nSeqProduto)||'-'||vPdescricao||'
             </div>
             <div class="col-3 my-auto">
@@ -423,7 +478,7 @@ cHTML := cHTML ||'
         </div>
 
         <div class="row"> <!-- row descrições do produto -->
-            <div class="col-12">
+            <div class="col-12 zebra">
                 <div class="row border-dark mt-1">
                     <div class="col-2  fw-bold ">
                         <p class="my-auto">Industrial</p>
@@ -482,16 +537,16 @@ cHTML := cHTML ||'
                         Informações nutricionais
                     </div>
                     <div class="bg-alert fs-5 fw-bold text-center">
-                        Porção de 100g-(1 bife medio)
+                        '||vDescPorcaoMedia||'
                     </div>
                     <div class="row">
                         <div class="mx-auto col-12">
                             <table class="table align-middle table-bordered border table-striped">
                                 <thead>                                    
-                                    <tr>                                        
-                                        <th width="200px">descrisao</th>
+                                    <tr class="text-center">                                        
+                                        <th width="150px">descrisao</th>
                                         <th width="50">quantidade</th>
-                                        <th width="50">Valor Diaria</th>
+                                        <th width="90">%Valor Diaria</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-break">';
@@ -513,8 +568,8 @@ cHTML := cHTML ||'
                                         <td>
                                             <p>'||TO_CHAR(I.DESCRICAO)||'</p>
                                         </td>
-                                        <td>'||TO_CHAR(I.QUANTIDADE)||'</td>
-                                        <td>'||TO_CHAR(I.DIARIO)||'</td>
+                                        <td class="text-center">'||TO_CHAR(I.QUANTIDADE)||'</td>
+                                        <td class="text-center">'||TO_CHAR(I.DIARIO)||'</td>
 
                                     </tr>
                                     ';
@@ -538,7 +593,6 @@ cHTML := cHTML ||'
                         <div class="mx-auto col-12">
 
                             <table class="table align-middle table-bordered border table-striped">
-
 
                                 <tbody class="text-break">
 
@@ -573,15 +627,7 @@ cHTML := cHTML ||'
                                         <td>
                                             <p>'||vValidade||'</p>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <p>Peso Medio:</p>
-                                        </th>
-                                        <td>
-                                            <p>'||vPesoMedio||'</p>
-                                        </td>
-                                    </tr>
+                                    </tr>                                   
                                     <tr>
                                         <th scope="row">
                                             <p>Emb. Padrao:</p>
@@ -596,10 +642,21 @@ cHTML := cHTML ||'
                                             <p>Maturado:</p>
                                         </th>
                                         <td>
-                                            <p>'||vMaturado||'</p>
+                                            <p class="fw-bold text-alert">'||vMaturado||'</p>
                                         </td>
                                     </tr>
-
+                                    <tr class="oculta-formula">
+                                        <td colspan="2">
+                                            <p>
+                                             <b>Formula: </b>'||vFormulaProduto||'Carne mecanicamente separada de ave (frango e/ou galinha e/ou peru),
+                                             carne suína, água, gordura suína, proteína de soja, miúdos suínos (pode conter fígado, língua, rim e/ou coração),
+                                             sal, amido, açúcar, alho, cebola, pimenta branca, pimenta calabresa, noz-moscada,
+                                             regulador de acidez: lactato de sódio e citrato de sódio, estabilizantes: tripolifosfato de sódio e pirofosfato dissódico,
+                                             aromatizantes: aromas naturais de (fumaça, orégano, coentro), realçador de sabor: glutamato monossódico, antioxidante: isoascorbato de sódio,
+                                             corantes: urucum e carmim de cochonilha, conservador: nitrito de sódio.
+                                            </p>
+                                        </td>
+                                    </tr>
 
                                 </tbody>
                             </table>
@@ -625,7 +682,7 @@ cHTML := cHTML ||'
            <div class="col distaca text-center  px-1 border border-white">
                <div class="fw-bold ">cod gtin </div>
                <div class="bg-white mb-1 ">
-                   '||vGtinUnidadePadrao||'
+                   '||vGtinMenorControle||'
                </div>
            </div>            
            <div class="col distaca text-center  px-1 border  border-white">
@@ -648,10 +705,11 @@ cHTML := cHTML ||'
            </div>
            <div class="col distaca text-center  px-1  border border-white">
                <div class="fw-bold ">Peso padrão</div>
-               <div class="bg-white mb-1 fw-bold ">
+               <div class="bg-white mb-1 fw-bold  text-alert">
                    '||vPesoPadrao||'
                </div>
-           </div> 
+           </div>
+           
            
         </div><!--fim row-->
 
@@ -911,27 +969,19 @@ cHTML := cHTML ||'
         </div>
         <!-- #################### --- FIM bloco 5 -- ################################  -->
     </div><!--fim A4 Page2-->
-    <div id="Page3"class="A4">
-        
+    <div id="Page3" class="A4">        
         <div class="row mb-1">
             <div class="col-12">
 
                 <div class="caixa">
                     <div class="distaca fs-5 fw-bold text-center">
-                        Etiquetas
+                        Modelo de Etiqueta Interna: imagem meramente ilustrativa
                     </div>
                     <div class="row">
-                        <div class="mx-auto col-6">
+                        <div class="mx-auto" style="width:auto">
                             <img class="foto img-fluid  "
                                 src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vEtiquetaPrimaria)|| '" />
-                        </div>
-                        <div class="row">
-                            <div class="mx-auto col-7 caixat">
-                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
-                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
-                                <p>isbdvkibsdkifyvbsoi aiuvisudfiuvs siudngfisundfu</p>
-                            </div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -943,7 +993,7 @@ cHTML := cHTML ||'
                         Modelo da etiqueta testeira: imagem meramente ilustrativa
                     </div>
                     <div class="row">
-                        <div class="col-11 mx-auto ">
+                        <div class="mx-auto " style="width:auto">
                             <img class="  foto img-fluid mx-auto  "
                                 src="data:image/png;base64,'||DPKG_Library.DGEF_ImagemBase64(vEtiquetaSecundaria)|| '" />
                         </div>
@@ -953,69 +1003,31 @@ cHTML := cHTML ||'
             </div>
         </div>
         <div class="row mb-1">
-
-            <div class="col caixat">
-                <p>
-                    Texto Texto Texto
-                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                    Texto Texto TextoTexto Texto Texto Texto Texto.
-                </p>
-                <p>
-                    Texto Texto Texto
-                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                    Texto Texto TextoTexto Texto Texto Texto Texto.
-                </p>
-                <p>
-                    Texto Texto Texto
-                    Texto Texto Texto Texto Texto Texto Texto Texto Texto.
-                    Texto Texto TextoTexto Texto Texto Texto Texto.
-                </p>
+            <div class="col fs-5">
+                <div class="caixa">
+                    <p>
+                        Data de Produção: Data de embalagem do produto ('||vTipoCalculoValidade||')
+                    </p>
+                    <p>
+                        Data de Embalagem: Data de embalagem do produto ('||vTipoCalculoValidade||')
+                    </p>
+                    <p>
+                        Data de Validade: Contar a partir da data de embalagem do produto ('||vTipoCalculoValidade||')
+                    </p>
+                    <P>
+                        Código de Rastriabilidade: SIF ABATEDOURO + DATA DE ABATE + ØØØØ
+                    </P>
+                    <P>
+                        Shipping Mark: Imformado pelo Cliente.
+                    </P>
+                </div>
             </div>
-
         </div>
         <!-- #################### --- FIM bloco 9 -- ################################  -->
     </div><!--fim A4 Page3-->
     <div id="Page4"class="A4">
         <!-- #################### --- FIM bloco 10 -- ################################  -->
-        <div class="row">
-            <div class="col-12">
-
-                <div class=" ">
-
-                    <div class="row fs-5 fw-bold  ">
-
-                        <div class=" col-3  rounded-top text-center distaca">
-                            Uso exclusivo de bataguassu
-                        </div>
-
-                        <div class=" col-5 fs-5 fw-bold ms-auto rounded-top distaca">
-                            COLAR A ETIQUETA COM O "SHIPPNG MARK" INFORMADO PELO CLIENTE
-                        </div>
-                    </div>
-
-                    <div class="row ">
-                        <div class="col-12 border border-5 ">
-                            <!-- <img class="mx-auto  foto img-fluid  " src="1.jpg"/> -->
-                            <div class="col caixa-etiqueta">
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row fs-5 fw-bold  ">
-
-                        <div class=" col-5  rounded-bottom  text-center distaca">
-                            <p>Espaço Reservado para USDA.</p>
-                            <p>As Etiquetas não podem sobrepor este espaço.</p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
+        
         <br />
         <!-- #################### --- FIM bloco 10 -- ################################  -->
 
