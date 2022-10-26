@@ -176,5 +176,32 @@ FROM
     GE_EMPRESA E  
 where e.nroempresa = vEmpresa; 
 
+-- comando criar tabela de versao 
 
-   
+create table DTVIND_PRODUTOVERSAO (
+       seqproduto number,
+       dataVersao date,
+       nroVersao number      
+)
+
+-- relatorio de versao, comando para cravar as tabelas   dtvind_produtoversao 
+
+   begin
+  for i in(
+select 
+        
+        p.seqproduto
+        
+from 
+       DGE_produto p, dge_grupoproduto gp, dge_tipoproduto tp 
+where
+  p.grupoprod = gp.grupoprod 
+ and tp.tipoproduto = gp.tipoproduto
+ and gp.tipoproduto = 2)
+ loop
+   insert into dtvind_produtoversao(seqproduto,dataversao,nroversao)values(i.seqproduto, trunc(sysdate), 0);
+   commit;
+end loop;
+end;
+ 
+-- trigger para gerar relatorio de versão
