@@ -79,7 +79,9 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    
 -- VERSAO DO RELATORIO 
    vCodVersao               varchar(6);
-   vDataVersao              varchar(10);   
+   vDataVersao              varchar(10); 
+-- VARIAVEL DE DETALHES DA VERSAO DA TABELA VERSAO  
+   vDetalhes                varchar2(5000);
 
 BEGIN
    --SELECT PORSAO MEDIA I 
@@ -284,7 +286,12 @@ for i in
       TO_CHAR(p.nroversao,'000') as nroversao
    FROM 
       DTVIND_PRODUTOVERSAO p 
-   WHERE p.seqproduto = nSeqProduto)
+   WHERE 
+      p.seqproduto = nSeqProduto
+      and p.nroversao = (select 
+                            max(nroversao) 
+                         from 
+                            DTVIND_PRODUTOVERSAO))
 loop
   vDataVersao := i.dataVersao;
   vCodVersao := i.nroversao;
@@ -1043,10 +1050,75 @@ cHTML := cHTML ||'
         </div>
         <!-- #################### --- FIM bloco 9 -- ################################  -->
     </div><!--fim A4 Page3-->
+    
     <div id="Page4"class="A4">
-        <!-- #################### --- FIM bloco 10 -- ################################  -->
-   
-        <br />
+   <div id="embalagem" class="row">  <!-- #################### --- inicio tabela VERSAO-- ################################  -->
+            <div class="col-12">
+                <div class="caixa">
+                    <div class="distaca fs-4 fw-bold text-center">
+                        Relatorio de Versão da Ficha Técnica 
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border table-striped">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th width="50px">Versão</th>                                        
+                                        <th width="50">Data</th>
+                                        <th width="200px">Descrição</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody class="text-break">
+                                    ';
+                                    FOR i IN
+                                          (select         
+                                               pv.nroversao,
+                                               pv.dataversao                                           
+                                            FROM 
+                                               DTVIND_PRODUTOVERSAO pv
+                                            WHERE
+                                               pv.seqproduto = nSeqProduto)                                                                              
+                                    LOOP
+                                      -- FOR JUNTO DETALHES DA VERSAO EM UMA VARIVEL 
+                                        for x in(   
+                                              select        
+                                                 o.detalhe 
+                                              FROM 
+                                                 DGE_OCORRENCIA o,
+                                                 DTVIND_PRODUTOVERSAO pv
+                                              WHERE
+                                                 O.CODLINK = PV.SEQPRODUTO
+                                                 AND PV.NROVERSAO = i.nroversao
+                                                 AND pv.dataversao = o.data 
+                                                 AND o.motivo = 'ALTERAÇÃO FICHA TECNICA'
+                                                 AND O.CODLINK = nSeqProduto)
+                                        loop
+                                           vDetalhes:= vDetalhes||'<p>'||x.detalhe||'</p>'; 
+                                        end loop;
+                                                                            
+                                        cHTML := cHTML||'
+                                            <tr>
+                                                <th scope="row" class="text-center fw-bold fs-5">'||TO_CHAR(i.nroversao,'000')||'</th>
+                                                <td class="text-center fw-bold fs-5">'||TO_CHAR(i.dataversao, 'DD/MM/YYYY')||'</td>
+                                                <td>
+                                                    <p>'||TO_CHAR(vDetalhes)||'</p>
+                                                </td>                                                
+                                            </tr>
+                                        ';
+                                                                                    
+                                    END LOOP;
+
+                                    cHTML := cHTML||'
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- #################### --- FIM tabela  VERSAO -- ################################  -->
         <!-- #################### --- FIM bloco 10 -- ################################  -->
     </div><!--fim A4 Page4-->
     
