@@ -76,9 +76,13 @@ FUNCTION DGEFR_FichaTecnicaProduto(nSeqProduto in DGE_PRODUTO.SeqProduto%Type,
    
 -- DESCRISAO DE PORSÃO MEDIA PA TABELA NUTRICIONAL
    vDescPorcaoMedia         varchar2(200);
+   
+-- VERSAO DO RELATORIO 
+   vCodVersao               varchar(6);
+   vDataVersao              varchar(10);   
 
 BEGIN
-  --SELECT PORSAO MEDIA I 
+   --SELECT PORSAO MEDIA I 
 FOR I IN (
     select 
          p.descricao
@@ -230,6 +234,7 @@ for I in
       end if;
       
   end loop;                  
+
    --SELECT EMPRESA
 BEGIN                
 SELECT 
@@ -261,6 +266,7 @@ SELECT
   where 
       e.nroempresa = vEmpresa;
 END;
+
    --SELECT PADRAO DE VALIDADE 
 BEGIN
 select 
@@ -270,6 +276,20 @@ select
 from DGE_PRODUTOPLANTA  PP 
 WHERE PP.SEQPRODUTO = nSeqProduto;
 END;   
+
+   -- FOR PARA GRAVAR VERSAO E DATA NA FINHA TECNICA 
+for i in
+  (SELECT 
+      TO_CHAR(p.dataversao, 'DD/MM/YYYY') as dataVersao,
+      TO_CHAR(p.nroversao,'000') as nroversao
+   FROM 
+      DTVIND_PRODUTOVERSAO p 
+   WHERE p.seqproduto = nSeqProduto)
+loop
+  vDataVersao := i.dataVersao;
+  vCodVersao := i.nroversao;
+end loop;    
+
 --=========== CONDIÇÕES DE OCULTAMENTO DE INFORMAÇÃO =============== 
 
   --CONDIÇÃO INFORMAÇÃO NUTRICIONAL
@@ -292,13 +312,14 @@ for i in (
         end if; 
       end loop;
 
--- CONDIÇÃO FORMULA DO PRODUTO
-for i in(select 
-            count(formula) AS x 
-         from 
-            dge_produto 
-         where 
-            seqproduto = nSeqProduto)
+  --CONDIÇÃO FORMULA DO PRODUTO
+for i in
+  (select
+        count(formula) AS x 
+     from 
+        dge_produto 
+     where 
+        seqproduto = nSeqProduto)
   loop
     if i.x = 0 then
      vStyle:= vStyle||'
@@ -310,8 +331,7 @@ for i in(select
     end if; 
     
   end loop;     
- 
- 
+
  --============ INICIO HTML ====================
 cHTML := cHTML ||'
 <!-- 
@@ -336,8 +356,9 @@ cHTML := cHTML ||'
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FichaTecnica</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    
+        <link rel="stylesheet" type="text/css" href="../../../../../../bootstrap-5.2.2-dist/css/bootstrap.css" />
+    
     <style>
         html {
             font-size: 11px;
@@ -420,7 +441,7 @@ cHTML := cHTML ||'
             <div class="row b1"><!-- Row  cabesalho-->
                 <div class="col-2">
                     <img class="logo img-fluid"
-                        src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)|| '" />
+                        src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)||'" />
                 </div>
                 <div class="col-6 quebra">
                     <div class="row text-center ">
@@ -440,8 +461,8 @@ cHTML := cHTML ||'
                         </div>
                         <div class="col-6">
                             <div>'||vDataAtual||'</div>
-                            <div>'||vDataAtual||'</div>
-                            <div>01</div>
+                            <div>'||vDataVersao||'</div>
+                            <div>'||vCodVersao||'</div>
                         </div>
                     </div>
                 </div>
@@ -468,8 +489,8 @@ cHTML := cHTML ||'
             <div class="col-3 my-auto">
                 <div class="row my-0 ">
                     <div class="fs-1" style="color:#084298">'||vConservacao||'</div>
-                    <div class=""> Temperatura Mácima: '||vTempMaxima||'</div>
                     <div class=""> Temperatura Mínima: '||vTempMinima||'</div>
+                    <div class=""> Temperatura Máxima: '||vTempMaxima||'</div>                    
                 </div>
             </div>
         </div>
@@ -906,13 +927,13 @@ cHTML := cHTML ||'
         </div>
         <div class="row caixa mx-0 mb-2">
             <div class=" distaca text-center fw-bold mb-2 fs-4">
-                <p class="">Descrição de embalagens</p>
+                <p class="distaca">Descrição de embalagens</p>
             </div>
             <div class=" col-8 text-center fw-bold">
-                <p class="">Produto na embalagem primaria</p>
+                <p class="distaca">Produto na embalagem primaria</p>
             </div>
             <div class=" col-4 fw-bold text-center">
-                <p class="">primaria</p>
+                <p class="distaca">primaria</p>
             </div>
 
 
@@ -939,10 +960,10 @@ cHTML := cHTML ||'
 
             </div>
             <div class=" col-8 text-center fw-bold">
-                <p class="">Produto embalagem secundaria</p>
+                <p class="distaca">Produto embalagem secundaria</p>
             </div>
             <div class=" col-4 fw-bold text-center">
-                <p class="">descrição</p>
+                <p class="distaca">descrição</p>
             </div>
             <div class="col-8 ">
                 <div class="row">

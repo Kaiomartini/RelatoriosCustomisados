@@ -186,7 +186,7 @@ create table DTVIND_PRODUTOVERSAO (
 
 -- relatorio de versao, comando para cravar as tabelas   dtvind_produtoversao 
 
-   begin
+begin
   for i in(
 select 
         
@@ -205,3 +205,27 @@ end loop;
 end;
  
 -- trigger para gerar relatorio de versão
+CREATE OR REPLACE TRIGGER DTVIND_PRODUTOVERSAO
+BEFORE INSERT ON DGE_OCORRENCIA
+FOR EACH ROW
+
+DECLARE
+vDataVersao date;
+BEGIN
+
+
+   IF :NEW.MOTIVO = 'ALTERAÇÃO FICHA TECNICA' AND :NEW.TABLINK = 'DGE_PRODUTO' THEN
+     SELECT
+        dataversao
+     into
+        vDataversao
+     FROM
+        dtvind_produtoversao
+     where
+        seqproduto = to_number(:new.codlink);
+
+     if vDataVersao <> :new.data then
+       update dtvind_produtoversao set nroVersao = nroVersao +1, DataVersao = :new.data where seqproduto = to_number(:new.codlink);
+     end if;
+   END IF;
+END;
