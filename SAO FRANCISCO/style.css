@@ -1,0 +1,70 @@
+html {
+    font-size: 11px;
+}
+.logo {
+    width: 100%;
+    height: 70px;
+}
+@media print {
+    .caixa {
+        page-break-inside: avoid;
+    }
+
+    .naoquebra {
+        page-break-inside: avoid;
+    }
+
+    .A4 {
+        page-break-before: always;
+    }
+}
+.A4 {
+    /*box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/
+    margin: 3mm auto;
+    width: 210mm;
+    padding: 0mm 0mm;
+    background-color: #fff;
+
+}
+
+.pquebra {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+.distaca {
+    background-color: #ddd;
+    
+
+}
+.foto {
+    margin: 5px auto 5px auto;
+    max-height: 250px;
+    min-height: 200px;
+    width: auto;
+    height: auto;
+
+}
+.caixa {border: 2px solid #ddd;}
+.caixat {
+    border: 1px solid #9b9999;
+    margin-bottom: 20px;
+    box-shadow: -5px 5px 0px #666;
+    background-color: #ddd;
+}
+.caixa-etiqueta { height: 250px;}
+p {
+    margin: 0px;
+    padding: 0px 5px 0px 5px;
+}
+.border {
+    border-color: rgb(19, 19, 19);
+    border: 2px solid #000;
+}
+.table>:not(caption)>*>* {padding: .0 0.5rem;}
+.table {  margin: 0px;}
+.text-alert{color:#ff2c2c}
+
+/*.zebra>div:nth-child(even) {
+background: rgba(0, 0, 0, 0.05);;
+      }*/
