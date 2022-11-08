@@ -13,7 +13,7 @@ SELECT * FROM DGE_PRODUTOANEXO WHERE SEQPRODUTO = 2040
             e.inscrestadual as ie
             FROM GE_EMPRESA E  where e.nroempresa = 1 
 -- SELECT FICHA TECNICA 
-     SELECT
+ SELECT
  (select E.codservico from DGE_EMPRESACOMPL E WHERE E.NROEMPRESA = 1) AS SIF,
  (select lpad(pe.gtin,14,0) from DGE_PRODUTOEMBALAGEM pe where pe.seqproduto  = 1002 and pe.menorunidcontrole = 'S') as gtinMenorControle, 
  lpad(pe.gtin,14,0) as gtinUnidadePadrao,
@@ -187,21 +187,25 @@ create table DTVIND_PRODUTOVERSAO (
 -- relatorio de versao, comando para cravar as tabelas   dtvind_produtoversao 
 
 begin
-  for i in(
-select 
-        
-        p.seqproduto
-        
-from 
-       DGE_produto p, dge_grupoproduto gp, dge_tipoproduto tp 
-where
-  p.grupoprod = gp.grupoprod 
- and tp.tipoproduto = gp.tipoproduto
- and gp.tipoproduto = 2)
- loop
-   insert into dtvind_produtoversao(seqproduto,dataversao,nroversao)values(i.seqproduto, trunc(sysdate), 0);
-   commit;
-end loop;
+  for i in( select 
+                                            
+               p.seqproduto
+                                                             
+            from 
+               DGE_produto p, 
+               dge_grupoproduto gp, 
+               dge_tipoproduto tp 
+                                                            
+            where
+               p.grupoprod = gp.grupoprod
+               
+               and tp.tipoproduto = gp.tipoproduto
+               and gp.tipoproduto = 2
+               and gp.grupoprod in (3,4))
+   loop
+     insert into dtvind_produtoversao(seqproduto,dataversao,nroversao)values(i.seqproduto, trunc(sysdate), 2);
+     commit;
+  end loop;
 end;
  
 -- trigger para gerar relatorio de versão
@@ -228,4 +232,184 @@ BEGIN
        update dtvind_produtoversao set nroVersao = nroVersao +1, DataVersao = :new.data where seqproduto = to_number(:new.codlink);
      end if;
    END IF;
+END;
+
+
+<div id="Page1" class="A4">
+        
+            <div class="row b1"><!-- Row  cabesalho-->
+                <div class="col-2">
+                    <img class="logo img-fluid"
+                        src="data:image/png;base64,'|| DPKG_Library.DGEF_ImagemBase64(vLogo)||'" />
+                </div>
+                <div class="col-6 quebra">
+                    <div class="row text-center ">
+                        <p class="fs-5 fw-bold">'||TO_CHAR(vNomeFantasia)||'</p>
+                        <p class="fs-6">'||'Local: '||TO_CHAR(vCidade)||' - '||TO_CHAR(vLogradouro)||' - '||TO_CHAR(vNumero)||'</p>
+                        <p class="fs-6">'||'CNPJ: '||TO_CHAR(vCNPJ)||'IE:'||TO_CHAR(vIE)||'</p>
+                        <p class="fs-6 d-inline"> Telefone:('||TO_CHAR(vDDD)||')'||TO_CHAR(vTelefone)||'</p>
+                        <p class="fs-6 d-inline">'||'CEP: '||TO_CHAR(vCep)||'</p>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="row">
+                        <div class="col-6 text-start">
+                            <div>Data de Emissão:</div>
+                            <div>Data de Revisão:</div>
+                            <div>Nº de Revisão:</div>
+                        </div>
+                        <div class="col-6">
+                            <div>'||vDataAtual ||'</div>
+                            <div>'||vDataVersao||'</div>
+                            <div>'||vCodVersao ||'</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row "> <!-- TITULO FORMULARIO -->
+                    <div class="col fs-5 text-center border-top fw-bold">
+                        <p>Ficha tecnica do produto</p>
+                    </div>
+                </div><!-- fim row-->
+
+            </div><!-- fim cabesalho-->
+        
+        
+        
+            <div id="Page4"class="A4">
+         <div id="embalagem" class="row">  <!-- #################### --- inicio tabela VERSAO --- ################################  -->
+            <div class="col-12">
+                <div class="caixa">
+                    <div class="distaca fs-4 fw-bold text-center">
+                        Relatorio de Versão da Ficha Técnica 
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto col-12">
+
+                            <table class="table align-middle table-bordered border table-striped">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th width="50px">Versão</th>                                        
+                                        <th width="50">Data</th>
+                                        <th width="200px">Descrição</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody class="text-break">
+                                    ';
+                                    FOR i IN
+                                          (select         
+                                               pv.nroversao,
+                                               pv.dataversao                                           
+                                            FROM 
+                                               DTVIND_PRODUTOVERSAO pv
+                                            WHERE
+                                               pv.seqproduto = nSeqProduto)                                                                              
+                                    LOOP
+                                      -- FOR JUNTO DETALHES DA VERSAO EM UMA VARIVEL 
+                                        for x in(   
+                                              select        
+                                                 o.detalhe 
+                                              FROM 
+                                                 DGE_OCORRENCIA o,
+                                                 DTVIND_PRODUTOVERSAO pv
+                                              WHERE
+                                                 O.CODLINK = PV.SEQPRODUTO
+                                                 AND PV.NROVERSAO = i.nroversao
+                                                 AND pv.dataversao = o.data 
+                                                 AND o.motivo = 'ALTERAÇÃO FICHA TECNICA'
+                                                 AND O.CODLINK = nSeqProduto)
+                                        loop
+                                           vDetalhes:= vDetalhes||'<p>'||x.detalhe||'</p>'; 
+                                        end loop;
+                                                                            
+                                        cHTML := cHTML||'
+                                            <tr>
+                                                <th scope="row" class="text-center fw-bold fs-5">'||TO_CHAR(i.nroversao,'000')||'</th>
+                                                <td class="text-center fw-bold fs-5">'||TO_CHAR(i.dataversao, 'DD/MM/YYYY')||'</td>
+                                                <td>
+                                                    <p>'||TO_CHAR(vDetalhes)||'</p>
+                                                </td>                                                
+                                            </tr>
+                                        ';
+                                                                                    
+                                    END LOOP;
+
+                                    cHTML := cHTML||'
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- #################### --- FIM tabela  VERSAO -- ################################  -->
+
+    </div><!--fim A4 Page1-->
+
+/*Tabela auxiliar para sequencial*/
+create table DTVIND_PRODUTOSEQUENCIAL
+(
+  seqproduto NUMBER,
+  sequencial  NUMBER
+) 
+-------------------------------- 
+/**VIEW QUE TRAZ O SEQUENCIAL**/
+CREATE OR REPLACE VIEW DGEVG_FICHATECPRODUTO AS
+SELECT
+   SeqCodLink, SeqTabLink as SeqTabLinkFK, Nvl(NValor, 0) as NValor, SValor, CodLink, DescrCodLink
+FROM (
+
+SELECT 
+   Cl.SeqCodLink, Cl.SeqTabLink, Cl.NValor, Cl.SValor, P.SeqProduto As CodLink, P.SeqProduto  ' - '  P.Descricao As DescrCodLink
+FROM 
+   DGE_Produto P, DGE_GrupoProduto Gp, DGE_TipoProduto Tp, DGE_TabLink Tl, DGE_CodLink Cl
+WHERE
+   P.GrupoProd = Gp.GrupoProd
+   AND Tp.TipoProduto = Gp.TipoProduto
+   AND Gp.tipoproduto = 2
+   AND Gp.grupoprod in (3,4)
+   AND P.SeqProduto = Cl.CodLink
+   AND Cl.SeqTabLink = Tl.SeqTabLink
+   AND Tl.Origem = 'DGEVG_FICHATECPRODUTO'
+
+UNION
+
+SELECT 
+   Null As SeqCodLink, Tl.SeqTabLink, Null As NValor, '' As SValor, P.SeqProduto As CodLink, P.SeqProduto  ' - '  P.Descricao As DescrCodLink
+FROM 
+   DGE_Produto P, DGE_GrupoProduto Gp, DGE_TipoProduto Tp, DGE_TabLink Tl
+WHERE
+   P.GrupoProd = Gp.GrupoProd
+   AND Tp.TipoProduto = Gp.TipoProduto
+   AND Gp.tipoproduto = 2
+   AND Gp.grupoprod in (3,4)
+   AND Tl.Origem = 'DGEVG_FICHATECPRODUTO'
+   And Not Exists(Select xC.SeqCodLink From DGE_CodLink xC Where xC.CodLink = P.SeqProduto And xC.SeqTabLink = Tl.SeqTabLink)
+)
+ORDER BY
+   CodLink;
+--------------------------------
+/** COMANDO QUE INSERE O SEQUENCIAL**/
+BEGIN
+
+   FOR i IN (
+      SELECT
+         *
+      FROM
+         DTVIND_ProdutoSequencial Ps, DGEVG_FichaTecProduto Ft
+      WHERE
+         Ps.SeqProduto = Ft.CodLink
+   )
+   LOOP
+
+      IF i.nValor = 0 THEN
+
+         INSERT INTO DGE_CodLink(SeqCodLink, SeqTabLink, CodLink, nValor)
+            VALUES ( S_DGE_CODLINK.NEXTVAL, i.Seqtablinkfk, i.CodLink, i.sequecial);
+         COMMIT;
+
+      END IF;
+
+   END LOOP;
 END;
