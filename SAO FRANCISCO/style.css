@@ -62,8 +62,8 @@ p {
     border: 2px solid #000;
 }
 .table>:not(caption)>*>* {padding: .0 0.5rem;}
-.table {  margin: 0px;}
-.text-alert{color:#ff2c2c}
+.table {  margin: 0px; }
+.text-alert{ color:#ff2c2c }
 
 /*.zebra>div:nth-child(even) {
 background: rgba(0, 0, 0, 0.05);;
