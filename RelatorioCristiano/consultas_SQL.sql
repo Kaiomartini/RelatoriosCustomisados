@@ -361,7 +361,7 @@ SELECT
 FROM (
 
 SELECT 
-   Cl.SeqCodLink, Cl.SeqTabLink, Cl.NValor, Cl.SValor, P.SeqProduto As CodLink, P.SeqProduto  ' - '  P.Descricao As DescrCodLink
+   Cl.SeqCodLink, Cl.SeqTabLink, Cl.NValor, Cl.SValor, P.SeqProduto As CodLink, P.SeqProduto  ||' - '||  P.Descricao As DescrCodLink
 FROM 
    DGE_Produto P, DGE_GrupoProduto Gp, DGE_TipoProduto Tp, DGE_TabLink Tl, DGE_CodLink Cl
 WHERE
@@ -376,7 +376,7 @@ WHERE
 UNION
 
 SELECT 
-   Null As SeqCodLink, Tl.SeqTabLink, Null As NValor, '' As SValor, P.SeqProduto As CodLink, P.SeqProduto  ' - '  P.Descricao As DescrCodLink
+   Null As SeqCodLink, Tl.SeqTabLink, Null As NValor, '' As SValor, P.SeqProduto As CodLink, P.SeqProduto  ||' - '||  P.Descricao As DescrCodLink
 FROM 
    DGE_Produto P, DGE_GrupoProduto Gp, DGE_TipoProduto Tp, DGE_TabLink Tl
 WHERE
@@ -413,3 +413,7 @@ BEGIN
 
    END LOOP;
 END;
+
+
+-- descrição de cortes do produto 
+select pa.codigo, pa.titulo, pa.descricao from DGE_ProdutoAnexo pa where seqproduto = 1002 and pa.codigo in (5,4,6)
