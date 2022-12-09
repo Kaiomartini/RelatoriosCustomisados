@@ -28,7 +28,18 @@ CREATE OR REPLACE Package DPKG_RELHTML Is
                                   
    FUNCTION DGEF_ExportarArquivoExcel(nId_button string,
                                       nid_tabela string) RETURN CLob;
-    
+                                      
+  /* FUNCTION DGEFR_ListaProduto( nSeqproduto  in DGE_PRODUTO.SeqProduto%Type
+      ) RETURN CLob;*/
+      
+    ---- relatorio de venda 
+   FUNCTION DGEFR_ListaProdutoVenda( nEmpresa string,
+                                     nInicioPeriudo string,
+                                     nFimPeriudo string,                                     
+                                     nTabelaPreso string,
+                                     nSeqCliente string,
+                                     nSeqRede string                                     
+                                    ) RETURN CLob;
                                   
 
 End DPKG_RELHTML;

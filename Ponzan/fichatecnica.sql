@@ -41,7 +41,7 @@
     vDescPorcaoMedia         varchar2(200);
     --imagem do produto 
     vImgProduto              Blob := null;
-    -- menor contrlole
+    -- menor controle
     vUnidadeMC                  varchar2(500) := null;
     vDescUnidadeMC               varchar2(500) := null;
     vDimensaoMC                         varchar2(500) := null;

@@ -118,7 +118,7 @@ SELECT
     P.SEQPRODUTO = Pe.Seqproduto
     AND P.SEQCLASSFISCAL = C.SEQCLASSFISCAL
     AND  P.SEQPRODUTO = PP.Seqproduto
-    AND PE.EMBALAGEMINDUSTRIAPADRAO = 'S'
+    DUM
     and u.unidade =pe.unidade
     --AND P.SeqProduto = Tui.SeqProduto
     --AND P.SEQPRODUTO =  8

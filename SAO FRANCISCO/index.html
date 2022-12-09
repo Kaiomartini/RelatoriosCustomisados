@@ -67,6 +67,11 @@
     <div class="naoQuebravel fs-1">T</div>
     <h2>cortado</h2>
     <button id="btn1">exportar</button>
+    <input id="input-busca" type="text"/>
+
+    <label for="input-busca">First name:</label>
+    <input type="text" id="input-busca" name="input-busca"><br><br>
+
     <div id="divTabela">
         
     
@@ -78,8 +83,9 @@
                 <th >Data</th>
                 <th >Descrição</th>
             </tr>
-        
-        <tbody class="text-break" >
+        </thead>
+
+        <tbody id="tabela-dados" class="text-break" >
             <tr>
                 <th scope="row">1</th>
                 <td>
@@ -98,7 +104,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>caio</p>
                 </td>
             </tr>                   
            
@@ -108,7 +114,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>davi</p>
                 </td>
             </tr>                    
             <tr>
@@ -117,7 +123,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>suni</p>
                 </td>
             </tr>                    
             <tr>
@@ -126,7 +132,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>larissa</p>
                 </td>
             </tr>                    
             <tr>
@@ -135,7 +141,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>carla</p>
                 </td>
             </tr>                    
             <tr>
@@ -144,7 +150,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>maria eduarda </p>
                 </td>
             </tr>                    
             <tr>
@@ -153,7 +159,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>gilberto </p>
                 </td>
             </tr>                    
             <tr>
@@ -162,7 +168,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>gilmar</p>
                 </td>
             </tr>                    
             <tr>
@@ -171,7 +177,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>angila</p>
                 </td>
             </tr>                    
             <tr>
@@ -180,7 +186,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>dane</p>
                 </td>
             </tr>                    
             <tr>
@@ -189,7 +195,7 @@
                     15/03/2022
                 </td>
                 <td>
-                    <p>gfffsdf</p>
+                    <p>Fernandinho</p>
                 </td>
             </tr>                    
         </tbody>
@@ -218,5 +224,53 @@
             });
         });
     </script>
+    <div class="row">
+        <div class="col">
+            <input id="input-busca" type="text" class=""/>
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">@</span>
+                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+              </div>
+        </div>
+    </div>
+
+    <!-- ############################ busca na tabela ####################### -->
+    <script>
+
+        const INPUT_BUSCA = document.getElementById("input-busca");
+        const TABELA_BEBIDAS = document.getElementById("tabela-dados");
+    
+        INPUT_BUSCA.addEventListener("keyup", () => {    
+            let expressao = INPUT_BUSCA.value.toLowerCase();
+    
+            if (expressao.length === 1) {
+                return;
+            }
+    
+            let linhas = TABELA_BEBIDAS.getElementsByTagName("tr");
+    
+            console.log();
+            for(let posicao in linhas){
+                if (true === isNaN(posicao)){
+                    continue;
+                }
+    
+                let conteudoDaLinha = linhas[posicao].innerHTML.toLowerCase();
+                
+                if(true === conteudoDaLinha.includes(expressao)){
+                    linhas[posicao].style.display = "";
+                } else {
+                    linhas[posicao].style.display = "none";
+                }
+            }
+    
+        });
+    </script>
+    <tfoot>
+        <tr>
+            <th>Datavale - Tecnologia & Sistemas | http://www.datavale.com.br/</th>
+            
+        </tr>
+    </tfoot>
 </body>
 </html>
