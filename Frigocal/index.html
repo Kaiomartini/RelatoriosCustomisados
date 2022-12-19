@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FichaTecnica</title>
+    
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <!--<link rel="stylesheet" type="text/css" href="../../../../../../bootstrap-5.2.2-dist/css/Style.css" /> -->
+        <style> 
+        html {
+            font-size: 11px;
+        }
+        body{
+            background-color: #484a5e;
+        }
+        .logo {
+            width: auto;
+            height: 100%;
+        }
+        
+        @page {
+            margin: 4mm ;
+        }
+
+        .A4 {
+            box-shadow: 0 .5mm 2mm rgba(0, 0, 0 / 22%);
+            margin: 3mm auto;
+            width: 220mm;
+            padding: 5mm 5mm;
+            background-color: #fff;
+
+        }
+
+        .th-x >th{
+        min-width:100px;
+        }
+
+        #btModal{
+        
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        }
+        #cabecalho {
+            /*box-shadow: 0 .5mm 2mm rgba(0, 0, 0);*/
+            margin: 0mm auto;
+            width: 210mm;
+            padding: 0mm 0mm;
+           
+        }
+
+        .pquebra {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        .distaca {
+            background-color: #ddd;
+            
+
+        }
+        .foto {
+               margin: 5px auto 5px auto;
+               max-height: 184px;
+               min-height: 0;
+               width: auto;
+               
+        }
+
+        
+        .caixa {border: 2px solid #ddd;}
+        .caixat {
+            border: 1px solid #9b9999;
+            margin-bottom: 20px;
+            box-shadow: -5px 5px 0px #666;
+            background-color: #ddd;
+        }
+        .caixa-etiqueta { height: 250px;}
+        p {
+            margin: 0px;
+            padding: 0px 5px 0px 5px;
+        }
+        .border {
+            border-color: rgb(19, 19, 19);
+            border: 2px solid #000;
+        }
+        .table>:not(caption)>*>* {padding: .0 0.5rem;}
+        
+        #Info.table>:not(caption)>*>* {padding: .5 0.5rem;}
+
+        .table {  margin: 0px;}
+
+        .text-alert{color:#ff2c2c}
+
+        /*.zebra>div:nth-child(even) {
+        background: rgba(0, 0, 0, 0.05);;
+              }*/
+              
+       @media print {
+                      .caixa {
+                          page-break-inside: avoid;
+                      }
+
+                      .naoquebra {
+                          page-break-inside: avoid;
+                      }
+
+                      .A4 {
+                          page-break-before: always;
+                          margin: 0px;
+                          width: 210mm;
+                          padding: 0mm 0mm;
+                          box-shadow: none ;
+                      }
+                      
+                      #btModal{
+                      display: none;
+                      }
+                      
+                      .apagar-print{
+                         display: none;
+                      }
+                      body{
+                        background-color: #ffffff;
+                      }
+                      
+                    }
+                    
+       .min-box{
+                height: 35px; 
+                padding: 10px;              
+                }
+                    </style>     
+    
+</head>
+
+<body class="text-uppercase">
+
+ 
+
+    <div id="Page1" class="A4">
+        
+        <div id="topo" class="row">
+            <div class="col text-center">
+                <p>Agência de Defesa Agrosilvopastoril do Estado de Rondônia - IDARON Gerência de Inspeção de Produtos de Origem Animal – GIPOA</p>
+                <p>Gerência de Inspeção de Produtos de Origem Animal – GIPOA</p>
+            </div>
+        </div>
+
+        <div id="titulo" class="row fs-5 fw-bold  mx-0">
+            <div class="col-8 text-center border">
+                <p>DOCUMENTO DE TRÂNSITO DE PRODUTOS DE
+                    ORIGEM ANIMAL – DTPOA </p>
+                
+            </div>
+            <div class="col-2 text-center border">            
+                <p>N° DTPOA</p>                
+            </div>
+            <div class="col-2 text-center border">            
+                <p>XXXXX/XXX/XX</p>                
+            </div>            
+
+        </div>
+
+
+        <div class="row mb-2"><!--tb1, tb2, tb3 -->
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="text-center distaca">
+                            <th class="col-3"> INFORMAÇÕES OBRIGATÓRIAS</th>
+                            <th class="col"> 1. DADOS DO EXPEDIDOR</th>
+                            <th class="col"> 2. DADOS DO DESTINATÁRIO</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border">
+                            <th>N° DE REGISTRO:</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>
+                        <tr>
+                            <th>NOME DO ESTABELECIMENTO:</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>
+                        <tr>
+                            <th>ENDEREÇO COMPLETO:</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>
+                        <tr>
+                            <th>MUNICÍPIO:</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>
+                        <tr>
+                            <th>CNPJ:</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>
+                        <tr class="text-center distaca">
+                            <th colspan="3">3. VERIFICAÇÃO DE VEÍCULO TRANSPORTADOR</th>
+                        </tr>
+                        <tr>
+                            <td>Data: 10/10/2020</td>
+                            <td>Horario: 15:33:44</td>
+                            <td>PLACA: AAA-111</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                    
+                    </tfoot>
+                </table>
+
+            </div>
+
+        </div><!--row fim tb1, tb2, tb3 -->
+
+        <div class="row mb-2"> <!--tabelas tb4  4. VERIFICAÇÃO DO CARREGAMENTO-->
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="text-center distaca">
+                            <th colspan="4"  class="col-3"> 4. VERIFICAÇÃO DO CARREGAMENTO</th>                         
+                        </tr>
+                    </thead>
+                    <tbody>                  
+                        <tr class="text-center">
+                            <th class="col">Data inicio:</th>
+                            <td class="col">10/10/2020</td>
+                            <th class="col">Horario inicio:</th>
+                            <td class="col">15:33:44</td>                            
+                        </tr>
+                        <tr class="text-center">
+                            <th class="col">Data fim:</th>
+                            <td class="col">10/10/2020</td>
+                            <th class="col">Horario fim:</th>
+                            <td class="col">15:33:44</td>                            
+                        </tr>
+                        <tr class="text-center">
+                            <th class="col">Lacre:</th>
+                            <td class="col" colspan="3">2168135168321683153513835138</td>                                                        
+                        </tr>                        
+                    </tbody>
+                    <tfoot>
+                    
+                    </tfoot>
+                </table>
+
+            </div>
+
+        </div> <!--tabelas tb4 -->
+
+        <div class="row mb-2"> <!--tabelas tb5  5. IDENTIFICAÇÃO GERAL DOS PRODUTOS -->
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="text-center distaca">
+                            <th colspan="2"  class="col"> 5. IDENTIFICAÇÃO GERAL DOS PRODUTOS</th>                         
+                        </tr>
+                    </thead>
+                    <tbody>                  
+                        <tr class="text-center">
+                            <th class="col">FINALIDADE:</th>
+                            <td class="col">COMESTÍVEL/Não</td>
+                                                     
+                        </tr>
+
+                        <tr class="text-center">
+                            <td class="col">Temperatura média dos produtos (°C)</td>
+                            <td class="col"> 4 graus</td>
+                        </tr>
+
+                        <tr class="text-center">
+                            <td class="col">Temperatura do Contentor/Baú Frigorífico (se aplicável)/(°C):</td>
+                            <td class="col" colspan="3">4 graus</td>                                                        
+                        </tr>                  
+
+                        <tr class="text-center">
+                            <td class="col">N° DA NOTA FISCAL DO PRODUTO:</td>
+                            <td class="col" colspan="3">165354681</td>                                                        
+                        </tr> 
+                                               
+                    </tbody>
+                    <tfoot>
+                    
+                    </tfoot>
+                </table>
+
+            </div>
+
+        </div> <!--tabelas tb5 -->
+
+        <div class="row mb-2"> <!--tabelas tb6  6. RASTREABILIDADE DOS PRODUTOS EMBARCADOS -->
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="text-center distaca">
+                            <th colspan="10"  class="col"> 6. RASTREABILIDADE DOS PRODUTOS EMBARCADOS</th>                                                     
+                        </tr>
+                        <tr class="text-center distaca">
+                            <th  class="col"> row</th>                                                     
+                            <th  class="col"> produto</th>                                                     
+                            <th  class="col"> CATEGORIA</th>                                                     
+                            <th  class="col"> N° DE REGISTR </th>                                                     
+                            <th  class="col"> TIPO DE EMBALAGEM </th>                                                     
+                            <th  class="col"> N° DE EMBAL. </th>                                                     
+                            <th  class="col"> DATA FAB</th>                                                     
+                            <th  class="col"> DATA VAL</th>                                                     
+                            <th  class="col"> N° LOTE</th>                                                     
+                            <th  class="col"> PESO LIQ.(Kg)</th>                                                     
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr class="text-center">
+                            <th>1</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr> 
+                        <tr class="text-center">
+                            <th>2</th>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                            <td>testo</td>
+                        </tr>                                        
+                        
+                                               
+                    </tbody>
+                    <tfoot>
+                        <tr class="text-center">
+                            <th colspan="3">N° de volumes totais</th>
+                            <td colspan="2">2000</td>
+                            <th colspan="3">Peso Líquido total (Kg)</th>
+                            <td colspan="2">500 kg</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+
+        </div> <!--tabelas tb6 -->
+
+        <div class="row fs-6 mx-0"> <!--tabelas tb7 7. GARANTIAS -->
+            <div class="col border">
+
+                <div class="row ">
+                    <div class="col-12 text-center  distaca">
+                        <p>7. GARANTIAS </p>                
+                    </div>
+                </div>
+                
+                <div class="row align-items-center">
+                    <div class="col-10 text-center ">            
+                        <p class="">OS PROGRAMAS DE AUTOCONTROLE REFERENTES AOS PRODUTOS EMBARCADOS FORAM REVISADOS E ESTÃO CONFORMES?</p>                
+                    </div>
+
+                    <div class="col-2 text-center border-start "> 
+                        <div class="row">
+                            <div class="col-6 border-end"> sim </div>  
+                            <div class="col-6"> Não </div>
+                        </div>     
+                        <div class="row border-top " >
+                            <div class="col-6 border-end py-3">  </div>  
+                            <div class="col-6 py-3"> </div>
+                        </div>   
+                    </div> 
+                </div>
+
+            </div>
+        </div><!-- fim tabelas tb7 -->
+
+        <div  class="row"> <!-- tabelas tb8 -->
+            <div class="col my-2 fs-6">
+                <p>* Art. 18°, § 3º - Poderão ser emitidos mais de um DT-POA para um único contentor, mas nunca um único DT-POA para mais de um contentor.</p>
+                <p>* Art. 18°, § 4º - É vedado a emissão de DT-POA contendo produtos comestíveis e não comestíveis no mesmo documento, mesmo que ambos estejam devidamente acondicionados, rotulados, armazenados e inspecionados.</p>
+            </div>
+        </div><!-- fim tabelas tb8 -->
+
+        <div  class="row my-2"> <!-- tabelas tb9 -->
+            <div class="col">
+                <p class="border" style="height: 80px;" >Carimbo da especificação da via do DTPOA (no caso do uso do carimbo CANCELADO, incluir os dizeres do §3º, do Art. 20)</p>
+                
+            </div>
+        </div><!-- fim tabelas tb9 -->
+
+        <div  class="row my-2"> <!-- tabelas tb10 -->
+            <div class="col">
+                <p class="border " style="height: 80px;" >Assitarura e Carimbo do Responsável Técnico pelo Estabelecimento.</p>
+            </div>
+        </div><!-- fim tabelas tb10 -->
+
+        <div  class="row my-2"> <!-- tabelas tb11 -->
+            <div class="col  text-end">
+                <p> Município, XX de XXXXX de 202X.</p>                
+            </div>
+        </div><!-- fim tabelas tb11 -->
+
+
+
+
+            
+            
+      </div>
+       
+       
+     
+</div><!-- fim page 1 -->            
+            
+</body>
+
+</html>'
